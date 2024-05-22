@@ -1,0 +1,115 @@
+.account-page {
+  height: 89vh;
+  background-color: #fff;
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.account-page-section-container {
+  width: 100%;
+  height: 100%;
+  background-color: #fff;
+  /* background-color: aqua; */
+}
+
+.account-page-signin-section {
+  width: 50%;
+  height: 100%;
+  /* background-color: red; */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  /* padding-left: 4.5em; */
+}
+
+.account-page-signup-section {
+  width: 50%;
+  height: 100%;
+  /* background-color: green; */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  /* padding-left: 4.5em; */
+}
+
+.account-page-sliding-section {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 50%;
+  height: 100%;
+  background-color: #4daa57;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  /* padding-left: 4.5em; */
+}
+
+.animation-left {
+  border-radius: 6em 0em 0em 6em;
+  transform: translate(100%, 0%);
+  transition: transform 1.7s, border-radius 1.7s;
+  animation: slide-left 1.7s linear 0s 0 forwards linear;
+}
+
+.animation-right {
+  border-radius: 0em 10em 10em 0em;
+  transform: translate(0%, 0%);
+  transition: transform 1.7s, border-radius 1.7s;
+  animation: slide-right 1.7s linear 0s 0 forwards linear;
+}
+
+@keyframes slide-right {
+  from {
+    border-radius: 0em 6em 6em 0em;
+    transform: translate(0%, 0%);
+  }
+  to {
+    border-radius: 6em 0em 0em 6em;
+    transform: translate(100%, 0%);
+  }
+}
+
+@keyframes slide-left {
+  from {
+    border-radius: 6em 0em 0em 6em;
+    transform: translate(100%, 0%);
+  }
+  to {
+    transform: translate(0%, 0%);
+    border-radius: 0em 6em 6em 0em;
+  }
+}
+
+.signup-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: fit-content;
+  background-color: #4daa57;
+}
+
+.sliding-page-image {
+  height: 200px;
+  width: 200px;
+  object-fit: contain;
+  filter: grayscale(100);
+}
+
+.sliding-page-heading {
+  font-size: 4em;
+  margin: 0px;
+}
