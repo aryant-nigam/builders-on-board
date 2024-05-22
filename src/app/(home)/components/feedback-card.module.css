@@ -1,0 +1,51 @@
+.feedback-card {
+  height: 100%;
+  width: 25%;
+  border-radius: 1em;
+  background-color: #2c554f;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 1em;
+  justify-content: center;
+  margin: 0px 15px;
+}
+
+.consumer-name {
+  color: #4daa57;
+  margin: 5% 0px;
+  font-size: large;
+  text-transform: capitalize;
+}
+
+.service {
+  margin: 5px 0px;
+  color: #fff;
+  font-weight: 400;
+  font-size: medium;
+  text-transform: capitalize;
+}
+
+.feedback {
+  color: #fff;
+}
+
+.rating-holder {
+  display: flex;
+  width: fit-content;
+  align-self: flex-end;
+  /* align-items: flex-end; */
+}
+
+.star-img {
+  height: 30px;
+  width: 30px;
+  object-fit: cover;
+}
+
+.rating {
+  color: #fff;
+  font-size: large;
+  margin: 0px 10px;
+  align-self: last baseline;
+}

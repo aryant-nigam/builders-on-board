@@ -1,0 +1,57 @@
+.navbar {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  overflow: hidden;
+  height: 80px;
+  background-color: #fff;
+  margin: 0px;
+  padding: 0px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0px 3.5em;
+  z-index: 50;
+  position: sticky;
+  top: 0;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.app-logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-logo {
+  color: #2c554f;
+  text-decoration: none;
+  font-size: x-large;
+}
+
+.first-char {
+  color: #4daa57;
+}
+
+.nav-options {
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  width: 20%;
+  justify-content: space-between;
+  font-size: 18px;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.nav-option {
+  margin: 0px 5px;
+  min-width: fit-content;
+  text-decoration: none;
+  color: #2c554f;
+}
+
+.nav-option:hover {
+  color: #4daa57;
+}

@@ -1,0 +1,77 @@
+.home-segment-4 {
+  width: 100%;
+  height: fit-content;
+  background-color: #2c554f;
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.home-segment-4-top {
+  width: 100%;
+  height: fit-content;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 4em 4em 4em 4em;
+}
+
+.home-segment-4-top > h1,
+.home-segment-4-bottom > h1 {
+  width: fit-content;
+  font-weight: 600;
+  font-size: 3em;
+  text-transform: capitalize;
+  margin: 10px 0px;
+  color: #fff;
+  box-sizing: border-box;
+}
+
+.highlighted-text {
+  color: #4daa57;
+}
+
+.home-segment-4-guide-cards-container {
+  width: fit-content;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2em 0em;
+}
+
+.home-segment-4-bottom {
+  width: 100%;
+  height: 50%;
+  background-color: #fff;
+}
+
+.home-segment-4-bottom {
+  width: 100%;
+  height: fit-content;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 4em 4em 4em 4em;
+  background-color: #fff;
+}
+
+.home-segment-4-bottom > h1 {
+  color: #000;
+}
+
+.home-segment-4-feedback-cards-container {
+  width: fit-content;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2em 0em;
+  overflow-x: hidden;
+}
