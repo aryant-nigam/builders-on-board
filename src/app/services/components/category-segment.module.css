@@ -1,0 +1,22 @@
+.category-segment {
+  width: 100%;
+  height: 350px;
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  padding: 1em 2em;
+}
+
+.category-segment > h1 {
+  color: #2c554f;
+  text-transform: capitalize;
+  margin: 10px;
+}
+
+.workers-list {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+}

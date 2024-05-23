@@ -1,7 +1,6 @@
+"use client";
 import React from "react";
-//import classes from "../app/account/components/form.module.css";
 import classes from "./input.module.css";
-import { Placeholder } from "react-select/animated";
 
 interface IInput {
   type: string;
