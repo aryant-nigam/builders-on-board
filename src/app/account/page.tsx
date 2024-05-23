@@ -1,34 +1,37 @@
 "use client";
 import React, { useState } from "react";
 import classes from "./page.module.css";
+import SigninForm from "./components/sign-in-form";
+import SignupForm from "./components/sign-up-form";
 
-function SignupContent() {
+function Content({
+  heading,
+  subHeading,
+  btnText,
+  toggleHandler,
+}: {
+  heading: string;
+  subHeading: string;
+  btnText: string;
+  toggleHandler: () => void;
+}) {
   return (
-    <div className={classes["signup-content"]}>
-      <img
-        src="sliding-page-image.png"
-        className={classes["sliding-page-image"]}
-      ></img>
-      <h1 className={classes["sliding-page-heading"]}>Hello, Friend!</h1>
-      <h4 className={classes["sliding-page-subheading"]}>
-        Register with your personal details to avail all of our services
-      </h4>
+    <div className={classes["content"]}>
+      <h1 className={classes["sliding-page-heading"]}>{heading}</h1>
+      <h4 className={classes["sliding-page-subheading"]}>{subHeading}</h4>
+      <button className={classes["toggle-btn"]} onClick={toggleHandler}>
+        {btnText}
+      </button>
     </div>
   );
 }
 
-function SigninContent() {
-  return <div className={classes["signin-content"]}></div>;
-}
-
 function AccountPage() {
-  const [isLoginFormVisible, setIsLoginFormVisible] =
-    React.useState<boolean>(true);
+  const [isLoginFormVisible, setIsLoginFormVisible] = useState<boolean>(true);
 
   const toggleHandler = () => {
     setIsLoginFormVisible((prevState) => {
-      console.log(!prevState);
-      console.log(!prevState ? "animation-left" : "animation-right");
+      console.log(!prevState ? "animation-right" : "animation-left");
       return !prevState;
     });
   };
@@ -36,8 +39,12 @@ function AccountPage() {
   return (
     <div className={classes["account-page"]}>
       <div className={classes["account-page-section-container"]}>
-        <div className={classes["account-page-signin-section"]}></div>
-        <div className={classes["account-page-signup-section"]}></div>
+        <div className={classes["account-page-signin-section"]}>
+          <SigninForm isFormVisible={isLoginFormVisible} />
+        </div>
+        <div className={classes["account-page-signup-section"]}>
+          <SignupForm isFormVisible={!isLoginFormVisible} />
+        </div>
         <div
           className={`${classes["account-page-sliding-section"]} ${
             isLoginFormVisible
@@ -45,8 +52,21 @@ function AccountPage() {
               : classes["animation-right"]
           }`}
         >
-          <SignupContent />
-          <button onClick={toggleHandler}>toggle</button>
+          {isLoginFormVisible ? (
+            <Content
+              heading="Welcome Back!"
+              subHeading="Enter your login credentials to use all of site features"
+              btnText="sign up"
+              toggleHandler={toggleHandler}
+            />
+          ) : (
+            <Content
+              heading="Hello, Customer!"
+              subHeading="Register with your personal details to avail all of our services"
+              btnText="sign in"
+              toggleHandler={toggleHandler}
+            />
+          )}
         </div>
       </div>
     </div>
