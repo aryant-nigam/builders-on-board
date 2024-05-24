@@ -7,11 +7,9 @@ interface Iworker {
   name: string;
   image: string;
   expertise: string;
-  pincode: number;
-}
-
-interface ICategory {
-  category: string;
+  pincode: string;
+  experience: number;
+  fee: number;
 }
 
 const workersList: Iworker[] = [
@@ -19,72 +17,103 @@ const workersList: Iworker[] = [
     id: 1122,
     name: "Abhay Srivastava",
     image: "worker-img.png",
-    expertise: "electrician",
-    pincode: 225533,
+    expertise: "electrical work",
+    pincode: "225533",
+    experience: 3,
+    fee: 300,
   },
   {
     id: 1123,
     name: "Abhay Srivastava",
     image: "worker-img.png",
-    expertise: "electrician",
-    pincode: 225533,
+    expertise: "electrical work",
+    pincode: "225533",
+    experience: 3,
+    fee: 300,
   },
   {
     id: 1124,
     name: "Abhay Srivastava",
     image: "worker-img.png",
-    expertise: "electrician",
-    pincode: 225533,
+    expertise: "painting",
+    pincode: "225533",
+    experience: 3,
+    fee: 300,
   },
   {
     id: 1125,
     name: "Abhay Srivastava",
     image: "worker-img.png",
-    expertise: "carpentry",
-    pincode: 225533,
+    expertise: "painting",
+    pincode: "225533",
+    experience: 3,
+    fee: 300,
   },
   {
     id: 1126,
     name: "Abhay Srivastava",
     image: "worker-img.png",
-    expertise: "carpentry",
-    pincode: 225533,
+    expertise: "painting",
+    pincode: "225533",
+    experience: 3,
+    fee: 300,
   },
   {
     id: 1127,
     name: "Abhay Srivastava",
     image: "worker-img.png",
-    expertise: "carpentry",
-    pincode: 225533,
+    expertise: "painting",
+    pincode: "225533",
+    experience: 3,
+    fee: 300,
   },
   {
     id: 1128,
     name: "Abhay Srivastava",
     image: "worker-img.png",
-    expertise: "painter",
-    pincode: 225533,
+    expertise: "pest controlling",
+    pincode: "225533",
+    experience: 3,
+    fee: 300,
+  },
+  {
+    id: 1129,
+    name: "Abhay Srivastava",
+    image: "worker-img.png",
+    expertise: "painting",
+    pincode: "225533",
+    experience: 3,
+    fee: 300,
   },
   {
     id: 1129,
     name: "Abhay Srivastava",
     image: "worker-img.png",
     expertise: "painter",
-    pincode: 225533,
-  },
-  {
-    id: 1129,
-    name: "Abhay Srivastava",
-    image: "worker-img.png",
-    expertise: "painter",
-    pincode: 225533,
+    pincode: "225533",
+    experience: 3,
+    fee: 300,
   },
 ];
 
-function CategorySegment({ category }: ICategory) {
-  const workers = workersList.filter((worker) => worker.expertise == category);
+function CategorySegment({
+  category,
+  pincode,
+}: {
+  category: string;
+  pincode: string;
+}) {
+  const workers = workersList.filter(
+    (worker) => worker.expertise == category && worker.pincode == pincode
+  );
   return (
     <div className={classes["category-segment"]}>
-      <h1>{category}</h1>
+      <h1>
+        <span className={classes["highlighted-text"]}>
+          {category} Staff&nbsp;
+        </span>
+        in your locality
+      </h1>
       <div className={classes["workers-list"]}>
         {workers.map((worker) => {
           return (
@@ -92,8 +121,9 @@ function CategorySegment({ category }: ICategory) {
               id={worker.id}
               name={worker.name}
               expertise={worker.expertise}
-              pincode={worker.pincode}
               image={worker.image}
+              experience={worker.experience}
+              fee={worker.fee}
             ></WorkerCard>
           );
         })}

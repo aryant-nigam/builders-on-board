@@ -7,10 +7,11 @@ interface IInput {
   value: string;
   valueHasError: boolean;
   errorMsg: string;
-  placeholder: string;
+  placeholder?: string;
   updateValueOnKeyStroke: (event: React.FocusEvent<HTMLInputElement>) => void;
   updateIsTouched: (event: React.FocusEvent<HTMLInputElement>) => void;
   isPasswordVisible?: boolean;
+  className?: string;
 }
 function Input({
   type,
@@ -21,11 +22,15 @@ function Input({
   updateValueOnKeyStroke,
   updateIsTouched,
   isPasswordVisible,
+  className,
 }: IInput) {
+  console.log("rendered");
   return (
     <div className={classes["input-holder"]}>
       <input
-        className={classes["input"]}
+        className={`${classes["input"]} ${
+          className ? className : classes["input-optional"]
+        }`}
         type={type == "text" ? "text" : isPasswordVisible ? "text" : "password"}
         value={value}
         placeholder={placeholder}

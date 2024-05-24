@@ -1,10 +1,10 @@
 .form {
   display: flex;
   flex-direction: column;
-  padding: 2em;
+  padding: 2em 5em;
   width: 100%;
   box-sizing: border-box;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 }
 
@@ -59,6 +59,7 @@
   text-transform: uppercase;
   cursor: pointer;
   font-weight: 600;
+  align-self: center;
 }
 
 .signin-btn:disabled {

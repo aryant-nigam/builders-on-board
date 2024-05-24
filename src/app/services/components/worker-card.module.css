@@ -1,14 +1,18 @@
 .worker-card {
   display: flex;
   flex-direction: column;
-  width: 250px;
+  width: 200px;
   height: fit-content;
-  background-color: blueviolet;
+  background-color: #2c554f;
+  border: 2px solid #2c554f;
   align-items: center;
-  margin: 15px;
+  margin: 10px;
   padding: 15px;
   border-radius: 10px;
   box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  position: relative;
 }
 
 .worker-image {
@@ -20,6 +24,8 @@
 
 .worker-name {
   margin: 10px;
+  text-align: center;
+  margin-top: 0px;
 }
 
 .worker-id {
@@ -28,8 +34,34 @@
 
 .worker-expertise {
   margin: 10px;
+  text-transform: uppercase;
+  color: #4daa57;
+  margin-top: 0px;
 }
 
-.pincode {
-  margin: 10px;
+.experience,
+.fee {
+  width: 100%;
+  margin-top: 0px;
+  font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+}
+
+.fee {
+  margin: 0px;
+}
+
+.exp-title,
+.fee-title {
+  font-weight: 600;
+}
+
+.checked-list-icon {
+  height: 40px;
+  width: 40px;
+  object-fit: cover;
+  position: absolute;
+  right: -15px;
+  top: -15px;
 }

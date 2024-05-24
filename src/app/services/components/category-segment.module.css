@@ -1,22 +1,30 @@
 .category-segment {
-  width: 100%;
-  height: 350px;
-  border: 1px solid black;
+  border: 2px dashed black;
   display: flex;
   flex-direction: column;
   background-color: #fff;
   padding: 1em 2em;
+  box-sizing: border-box;
+  border-radius: 10px;
 }
 
 .category-segment > h1 {
   color: #2c554f;
   text-transform: capitalize;
   margin: 10px;
+  width: 100%;
+  text-align: center;
 }
 
 .workers-list {
-  width: 100%;
-  height: 100%;
+  width: fit-content;
+  justify-content: center;
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+}
+
+.highlighted-text {
+  color: #4daa57;
 }

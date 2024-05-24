@@ -2,5 +2,145 @@
   height: fit-content;
   width: 100%;
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 1em 0em 1em 4em;
+  margin-bottom: 2em;
+  background-color: #fff;
+}
+
+.service-page-left-section {
+  padding: 1em 0em;
+  width: fit-content;
+  min-width: fit-content;
+  height: 100%;
+  background-color: #fff;
+  align-self: flex-start;
+  /* justify-self: flex-end; */
+}
+
+.service-page-right-section {
+  width: 50%;
+  background-color: #fff;
+  display: flex;
   flex-direction: column;
+  align-items: center;
+  padding: 1em 1.5em;
+
+  /* border: 5px solid black; */
+}
+
+.service-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border-radius: 10px;
+  border: 2px dashed black;
+  padding: 1.5em 2em;
+  box-sizing: border-box;
+}
+
+.details {
+  margin-bottom: 15px;
+}
+
+.fields-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.container {
+  display: flex;
+  width: 45%;
+  flex-direction: column;
+  align-items: flex-start;
+  /* border: 1px solid black; */
+}
+
+.label {
+  font-size: large;
+  font-weight: 600;
+  color: #4daa57;
+}
+
+.mandatory {
+  color: #2c554f;
+  font-weight: 700;
+}
+
+.input {
+  background-color: #fff;
+  font-size: 1.3em;
+}
+
+.details > h1 {
+  margin-top: 0px;
+  text-transform: capitalize;
+}
+
+.service-page-heading {
+  align-self: flex-start;
+  color: #2c554f;
+  text-transform: capitalize;
+}
+
+.service-form h1 {
+  margin-top: 0px;
+}
+
+.issue-description {
+  padding: 10px;
+  width: 100%;
+
+  margin-bottom: 1em;
+  box-sizing: border-box;
+  font-size: 1.3em;
+  border-radius: 5px;
+  outline: none;
+  resize: vertical;
+  height: 200px;
+}
+
+.service-name {
+  padding: 10px;
+  width: 100%;
+
+  box-sizing: border-box;
+  font-size: 1.3em;
+  border-radius: 5px;
+  text-transform: capitalize;
+  cursor: pointer;
+}
+
+.highlighted-text {
+  color: #4daa57;
+}
+.save-btn {
+  padding: 10px 25px;
+  font-size: medium;
+  border-radius: 8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: 600;
+  border: 1px solid #4daa57;
+  background-color: #4daa57;
+  color: #fff;
+  margin: 25px 20px 15px 0px;
+  width: fit-content;
+  align-self: flex-end;
+}
+
+.save-btn:disabled {
+  cursor: not-allowed;
+}
+
+.container-large {
+  width: 100%;
 }
