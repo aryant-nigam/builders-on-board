@@ -1,13 +1,14 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import classes from "./category-segment.module.css";
 import WorkerCard from "./worker-card";
 
-interface Iworker {
+export interface Iworker {
   id: number;
   name: string;
   image: string;
   expertise: string;
-  pincode: string;
+  pincode?: string;
   experience: number;
   fee: number;
 }
@@ -99,37 +100,59 @@ const workersList: Iworker[] = [
 function CategorySegment({
   category,
   pincode,
+  selectedWorker,
+  saveWorker,
 }: {
   category: string;
   pincode: string;
+  selectedWorker: Iworker | null;
+  saveWorker: (worker: Iworker) => void;
 }) {
   const workers = workersList.filter(
     (worker) => worker.expertise == category && worker.pincode == pincode
   );
-  return (
-    <div className={classes["category-segment"]}>
-      <h1>
-        <span className={classes["highlighted-text"]}>
-          {category} Staff&nbsp;
-        </span>
-        in your locality
-      </h1>
-      <div className={classes["workers-list"]}>
-        {workers.map((worker) => {
-          return (
-            <WorkerCard
-              id={worker.id}
-              name={worker.name}
-              expertise={worker.expertise}
-              image={worker.image}
-              experience={worker.experience}
-              fee={worker.fee}
-            ></WorkerCard>
-          );
-        })}
+
+  if (workers.length !== 0) {
+    const [workerSelected, setWorkerSelected] = useState<Iworker>(
+      selectedWorker ? selectedWorker : workers[0]
+    );
+
+    !selectedWorker && saveWorker(workerSelected);
+
+    const selectWorkerHandler = (worker: Iworker) => {
+      setWorkerSelected(worker);
+      saveWorker(worker);
+    };
+
+    return (
+      <div className={classes["category-segment"]}>
+        <h1>
+          <span className={classes["highlighted-text"]}>
+            {category} Staff&nbsp;
+          </span>
+          in your locality
+        </h1>
+        <div className={classes["workers-list"]}>
+          {workers.map((worker) => {
+            return (
+              <WorkerCard
+                key={worker.id}
+                worker={worker}
+                selectWorkerHandler={selectWorkerHandler}
+                isSelected={worker.id === workerSelected.id}
+              ></WorkerCard>
+            );
+          })}
+        </div>
       </div>
-    </div>
-  );
+    );
+  } else {
+    return (
+      <div className={classes["category-segment"]}>
+        <h1>😟 unfortunately! no experts found </h1>
+      </div>
+    );
+  }
 }
 
 export default CategorySegment;

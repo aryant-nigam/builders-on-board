@@ -1,32 +1,23 @@
 "use client";
 import React, { useState } from "react";
 import classes from "./worker-card.module.css";
+import { Iworker } from "./category-segment";
 
 interface IWorkerCard {
-  id: number;
-  name: string;
-  image: string;
-  expertise: string;
-  experience: number;
-  fee: number;
+  worker: Iworker;
+  isSelected: boolean;
+  selectWorkerHandler: (worker: Iworker) => void;
 }
 
-function WorkerCard({
-  id,
-  name,
-  image,
-  expertise,
-  experience,
-  fee,
-}: IWorkerCard) {
-  const [isSelected, setIsSelected] = useState(false);
-
-  const toggleSelectHandler = () => {
-    setIsSelected((prevState) => !prevState);
+function WorkerCard({ worker, isSelected, selectWorkerHandler }: IWorkerCard) {
+  const clickHandler = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    selectWorkerHandler(worker);
   };
 
   return (
-    <div className={classes["worker-card"]} onClick={toggleSelectHandler}>
+    <div className={classes["worker-card"]} onClick={clickHandler}>
       {isSelected && (
         <img
           src="check-mark.png"
@@ -34,17 +25,17 @@ function WorkerCard({
         ></img>
       )}
       <img src="worker-img.png" className={classes["worker-image"]}></img>
-      <p className={classes["worker-id"]}>{id}</p>
-      <h3 className={classes["worker-name"]}>{name}</h3>
-      <h4 className={classes["worker-expertise"]}>{expertise}</h4>
+      <p className={classes["worker-id"]}>{worker.id}</p>
+      <h3 className={classes["worker-name"]}>{worker.name}</h3>
+      <h4 className={classes["worker-expertise"]}>{worker.expertise}</h4>
 
       <p className={classes["experience"]}>
         <span className={classes["exp-title"]}>Experience:</span>
-        <span>{experience} yrs</span>
+        <span>{worker.experience} yrs</span>
       </p>
       <p className={classes["fee"]}>
         <span className={classes["fee-title"]}>Fee:</span>
-        <span>$ {fee}</span>
+        <span>₹ {worker.fee}</span>
       </p>
     </div>
   );

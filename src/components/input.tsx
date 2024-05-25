@@ -24,7 +24,6 @@ function Input({
   isPasswordVisible,
   className,
 }: IInput) {
-  console.log("rendered");
   return (
     <div className={classes["input-holder"]}>
       <input

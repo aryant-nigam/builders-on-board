@@ -28,3 +28,17 @@
 .highlighted-text {
   color: #4daa57;
 }
+.save-btn {
+  padding: 10px 35px;
+  font-size: medium;
+  border-radius: 8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: 600;
+  border: 1px solid #4daa57;
+  background-color: #4daa57;
+  color: #fff;
+  margin: 25px 20px 15px 0px;
+  width: fit-content;
+  align-self: flex-end;
+}

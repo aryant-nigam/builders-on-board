@@ -5,6 +5,9 @@ import CategorySegment from "./components/category-segment";
 import VerticalStepper from "./components/vertical-stepper";
 import useInput from "@/hooks/use-input";
 import Input from "@/components/input";
+import ServiceDetails from "./components/service-details";
+import { Iworker } from "./components/category-segment";
+import { useRouter } from "next/navigation";
 
 const categories: string[] = [
   "painting",
@@ -27,7 +30,8 @@ const steps = [
 ];
 
 function ServicesPage() {
-  const [activeStep, setActiveStep] = useState(1);
+  const router = useRouter();
+
   const fetchValues = (details: any) => {
     setDetails((prevState) => {
       return { ...prevState, ...details };
@@ -128,13 +132,17 @@ function ServicesPage() {
     reset: resetLandmark,
   } = useInput({ validator: landmarkValidator });
 
-  const [serviceType, setServiceType] = useState<string>("painting");
+  const [activeStep, setActiveStep] = useState(1);
   const [description, setDescription] = useState<string>("");
+  const [serviceType, setServiceType] = useState<string>("painting");
   const [hasSaved, setHasSaved] = useState<boolean>(false);
+  const [workerSelected, setWorkerSelected] = useState<Iworker | null>(null);
+  const [serviceDetails, setServiceDetails] = useState({});
+  const [totalSteps, setTotalSteps] = useState<number>(steps.length);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => {
-      if (prevActiveStep != steps.length + 1) {
+      if (prevActiveStep != totalSteps) {
         return prevActiveStep + 1;
       } else {
         return prevActiveStep;
@@ -145,7 +153,11 @@ function ServicesPage() {
   const handleBack = () => {
     setActiveStep((prevActiveStep) => {
       if (prevActiveStep != 1) {
-        if (prevActiveStep - 1 == 1) setHasSaved(false);
+        if (prevActiveStep - 1 == 1) {
+          setHasSaved(false);
+          setWorkerSelected(null);
+          setTotalSteps(steps.length);
+        }
         return prevActiveStep - 1;
       } else {
         return prevActiveStep;
@@ -163,11 +175,15 @@ function ServicesPage() {
     setDescription(event.target.value);
   };
 
-  let serviceDetails = {};
-  const formSubmitHandler = (event: React.FormEvent) => {
+  const saveWorker = (worker: Iworker) => {
+    if (workerSelected == null) setTotalSteps(steps.length + 1);
+    setWorkerSelected(worker);
+  };
+
+  const saveCustomerDetails = (event: React.FormEvent) => {
     event.preventDefault();
 
-    serviceDetails = {
+    setServiceDetails({
       firstname,
       lastname,
       phoneNumber,
@@ -177,10 +193,17 @@ function ServicesPage() {
       landmark,
       description,
       serviceType,
-    };
-    setHasSaved(true);
+    });
 
+    setHasSaved(true);
+    handleNext();
+  };
+
+  const submitHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    //send the details to database after creating an object from customer and worker details
+    console.log(workerSelected);
     console.log(serviceDetails);
+    router.replace("/home");
   };
 
   return (
@@ -194,18 +217,20 @@ function ServicesPage() {
         </h1>
         <VerticalStepper
           steps={steps}
-          totalSteps={steps.length + 1}
+          totalSteps={totalSteps}
           activeStep={activeStep}
           handleNext={handleNext}
           handleBack={handleBack}
           hasSaved={hasSaved}
+          shouldRenderSubmissionStep={workerSelected !== null}
+          submitHandler={submitHandler}
         />
       </div>
       <div className={classes["service-page-right-section"]}>
         {activeStep === 1 && (
           <form
             className={classes["service-form"]}
-            onSubmit={formSubmitHandler}
+            onSubmit={saveCustomerDetails}
           >
             <div className={classes["details"]}>
               <h1>Personal information</h1>
@@ -336,7 +361,7 @@ function ServicesPage() {
             <select
               className={classes["service-name"]}
               onChange={serviceChangeHandler}
-              defaultValue={categories[0]}
+              defaultValue={serviceType}
             >
               {categories.map((category, index) => (
                 <option key={index}>{category}</option>
@@ -361,7 +386,16 @@ function ServicesPage() {
         )}
 
         {activeStep === 2 && (
-          <CategorySegment category={serviceType} pincode={pincode} />
+          <CategorySegment
+            category={serviceType}
+            pincode={pincode}
+            selectedWorker={workerSelected}
+            saveWorker={saveWorker}
+          />
+        )}
+
+        {activeStep === 3 && (
+          <ServiceDetails details={{ serviceDetails, workerSelected }} />
         )}
       </div>
     </div>

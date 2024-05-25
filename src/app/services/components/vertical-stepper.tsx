@@ -56,7 +56,7 @@ const Step = ({
         <p className={classes["description"]}>{description}</p>
         {activeStep == stepNo && (
           <div className={classes["footer"]}>
-            {
+            {!isLastStep && (
               <button
                 className={classes["next-btn"]}
                 onClick={onNextHandler}
@@ -64,7 +64,7 @@ const Step = ({
               >
                 Next
               </button>
-            }
+            )}
 
             {stepNo != 1 && (
               <button className={classes["back-btn"]} onClick={onBackHandler}>
@@ -85,6 +85,8 @@ interface IVerticalStepper {
   handleNext: () => void;
   handleBack: () => void;
   hasSaved: boolean;
+  shouldRenderSubmissionStep: boolean;
+  submitHandler: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 export default function VerticalStepper({
@@ -94,12 +96,10 @@ export default function VerticalStepper({
   handleNext,
   handleBack,
   hasSaved,
+  shouldRenderSubmissionStep,
+  submitHandler,
 }: IVerticalStepper) {
   //   const [activeStep, setActiveStep] = useState<number>(1);
-
-  const onSubmitHandler = () => {
-    console.log("submit");
-  };
 
   return (
     <div className={classes["vertical-stepper"]}>
@@ -116,9 +116,9 @@ export default function VerticalStepper({
           onBackHandler={handleBack}
         ></Step>
       ))}
-      {activeStep === totalSteps && (
+      {shouldRenderSubmissionStep && activeStep === totalSteps && (
         <div className={classes["last-step-container"]}>
-          <button className={classes["submit-btn"]} onClick={onSubmitHandler}>
+          <button className={classes["submit-btn"]} onClick={submitHandler}>
             Submit
           </button>
           <button className={classes["back-btn"]} onClick={handleBack}>
@@ -130,3 +130,5 @@ export default function VerticalStepper({
     </div>
   );
 }
+
+// a
