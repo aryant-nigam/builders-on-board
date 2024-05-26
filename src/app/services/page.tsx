@@ -1,5 +1,5 @@
 "use client";
-import React, { ChangeEvent, useRef, useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import classes from "./page.module.css";
 import CategorySegment from "./components/category-segment";
 import VerticalStepper from "./components/vertical-stepper";

@@ -3,29 +3,35 @@ import React, { useEffect, useState } from "react";
 import classes from "./form.module.css";
 import useInput from "@/hooks/use-input";
 import Input from "@/components/input";
+import { useAppDispatch } from "@/store/hooks";
+import { logIn } from "@/store/features/auth-slice";
+import { useRouter } from "next/navigation";
+
 function SigninForm({ isFormVisible }: { isFormVisible: boolean }) {
+  const dispatch = useAppDispatch();
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+  const router = useRouter();
 
   const showPassword = (event: React.MouseEvent<HTMLInputElement>) => {
     setIsPasswordVisible((prevState) => !prevState);
   };
 
-  const usernameValidator = (username: string): boolean => {
-    return !username.includes(" ") && username.trim().length >= 8;
+  const emailValidator = (email: string): boolean => {
+    const regex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+    return regex.test(email);
   };
 
   const passwordValidator = (password: string): boolean => {
     return password.trim().length > 8;
   };
-
   const {
-    value: username,
-    isValid: isUsenameValid,
-    hasError: usernameHasError,
-    updateValueOnKeyStroke: updateUsernameOnKeystroke,
-    updateIsTouched: updateIsUsernameTouched,
-    reset: resetUsername,
-  } = useInput({ validator: usernameValidator });
+    value: email,
+    isValid: isEmailValid,
+    hasError: emailHasError,
+    updateValueOnKeyStroke: updateEmailOnKeystroke,
+    updateIsTouched: updateIsEmailTouched,
+    reset: resetEmail,
+  } = useInput({ validator: emailValidator });
 
   const {
     value: password,
@@ -38,15 +44,25 @@ function SigninForm({ isFormVisible }: { isFormVisible: boolean }) {
 
   useEffect(() => {
     if (!isFormVisible) {
-      resetUsername();
+      resetEmail();
       resetPassword();
     }
   }, [isFormVisible]);
 
   const formSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(username, password);
-    //reset inputs
+    console.log(email, password);
+    //send the request to API an get the details
+    dispatch(
+      logIn({
+        username: "Aryant",
+        accountType: "customer",
+        accessToken: "access_token",
+      })
+    );
+    resetEmail();
+    resetPassword();
+    router.replace("/");
   };
 
   return (
@@ -61,13 +77,13 @@ function SigninForm({ isFormVisible }: { isFormVisible: boolean }) {
       </h1>
 
       <Input
-        type="text"
-        value={username}
-        valueHasError={usernameHasError}
-        placeholder="Username"
-        errorMsg="Username must can not contain spaces and must be 8 characters long"
-        updateValueOnKeyStroke={updateUsernameOnKeystroke}
-        updateIsTouched={updateIsUsernameTouched}
+        type="email"
+        value={email}
+        valueHasError={emailHasError}
+        placeholder="Email"
+        errorMsg="Email not valid"
+        updateValueOnKeyStroke={updateEmailOnKeystroke}
+        updateIsTouched={updateIsEmailTouched}
       ></Input>
 
       <Input
@@ -95,7 +111,7 @@ function SigninForm({ isFormVisible }: { isFormVisible: boolean }) {
         type="submit"
         value="sign in"
         className={classes["signin-btn"]}
-        disabled={!isUsenameValid || !isPasswordValid}
+        disabled={!isEmailValid || !isPasswordValid}
       />
     </form>
   );

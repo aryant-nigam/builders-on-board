@@ -2,9 +2,6 @@ import React from "react";
 import classes from "./home-segment4.module.css";
 import GuideCard from "./guide-card";
 import FeedbackCard from "./feedback-card";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
-import Slider from "react-slick";
 
 function FourthHomeSegment() {
   var settings = {

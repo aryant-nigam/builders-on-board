@@ -30,7 +30,9 @@ function Input({
         className={`${classes["input"]} ${
           className ? className : classes["input-optional"]
         }`}
-        type={type == "text" ? "text" : isPasswordVisible ? "text" : "password"}
+        type={
+          type != "password" ? type : isPasswordVisible ? "text" : "password"
+        }
         value={value}
         placeholder={placeholder}
         onChange={updateValueOnKeyStroke}

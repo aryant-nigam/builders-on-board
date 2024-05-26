@@ -37,7 +37,7 @@
   list-style: none;
   display: flex;
   flex-direction: row;
-  width: 20%;
+  width: fit-content;
   justify-content: space-between;
   font-size: 18px;
   align-items: center;
@@ -46,7 +46,7 @@
 }
 
 .nav-option {
-  margin: 0px 5px;
+  margin: 0px 15px;
   min-width: fit-content;
   text-decoration: none;
   color: #2c554f;

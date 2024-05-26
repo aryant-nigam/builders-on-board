@@ -32,7 +32,6 @@ function ThirdHomeSegment() {
           <p>Compare taskers reviews, ratings and prices.</p>
         </div>
         <div className={classes["checked-list-item"]}>
-          {" "}
           <img
             src="check-mark.png"
             className={classes["checked-list-icon"]}
