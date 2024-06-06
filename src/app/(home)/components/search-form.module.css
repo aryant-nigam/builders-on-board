@@ -28,16 +28,23 @@
   height: 30px;
   width: 30px;
   object-fit: cover;
-  margin: 0px 12px;
+  margin: 0px 12px 0pc 12px;
 }
 
-.search-box {
+.pincode-search-box {
   height: 100%;
-  width: 60%;
+  width: 30%;
   box-sizing: border-box;
   border: none;
   outline: none;
-  font-size: large;
+  font-size: larger;
+  text-align: center;
+}
+
+.pincode-search-box::-webkit-outer-spin-button,
+.pincode-search-box::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .vertical-line {
@@ -47,20 +54,20 @@
   margin: 0px 8px;
 }
 
-.search-zip-code {
-  height: 100%;
-  width: 25%;
-  border: none;
-  outline: none;
-  font-size: large;
-}
-
-.zip-code {
+.services {
   cursor: pointer;
+  width: 50%;
+  margin: 0px 10px;
+  box-sizing: border-box;
+  height: 100%;
+  border: none;
+  font-size: larger;
+  text-transform: capitalize;
+  outline: none;
 }
 
-.zip-code:nth-child() {
-  background-color: antiquewhite;
+.services > option {
+  cursor: pointer;
 }
 
 .search-btn {
@@ -68,8 +75,16 @@
   border-top-right-radius: 10px;
   border-bottom-right-radius: 10px;
   color: #fff;
+  cursor: pointer;
   text-transform: capitalize;
   font-size: large;
   height: 100%;
   width: 25%;
+}
+
+.response {
+  margin-top: 10px;
+  font-size: large;
+  color: #2c554f;
+  font-weight: 500;
 }

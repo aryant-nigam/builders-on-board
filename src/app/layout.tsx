@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Body from "@/components/body";
 import Navbar from "@/components/navbar";
 import StoreProvider from "@/components/store-provider";
 
@@ -24,6 +23,7 @@ export default function RootLayout({
       </head>
 
       <body className=".body">
+        <div id="backdrop"></div>
         <StoreProvider>
           <Navbar />
           {children}

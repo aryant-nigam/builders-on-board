@@ -1,0 +1,65 @@
+.modal {
+  width: 40%;
+  background-color: #fff;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-shadow: 0px 0px 5px #2c554f;
+  animation: popOut 0.6s ease forwards infinite;
+  z-index: 101;
+}
+
+.modal-title {
+  font-size: x-large;
+  color: #2c554f;
+  font-weight: 600;
+}
+
+.modal-message {
+  margin: 15px 0px;
+  font-size: large;
+}
+
+.modal-actions {
+  display: flex;
+  flex-direction: row;
+  align-self: flex-end;
+}
+
+.modal-accept {
+  margin-right: 10px;
+  padding: 10px 25px;
+  font-size: medium;
+  border-radius: 8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: 600;
+  background-color: #4daa57;
+  color: #fff;
+  border: none;
+}
+
+.modal-deny {
+  margin-left: 10px;
+  padding: 10px 25px;
+  font-size: medium;
+  border-radius: 8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: 600;
+  color: #4daa57;
+  background-color: #fff;
+  border: 2px solid #4daa57;
+}
+
+@keyframes popOut {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
