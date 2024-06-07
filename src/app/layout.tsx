@@ -28,6 +28,7 @@ export default function RootLayout({
           <Navbar />
           {children}
         </StoreProvider>
+        <footer id="footer"></footer>
       </body>
     </html>
   );

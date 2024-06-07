@@ -1,0 +1,84 @@
+.form-container {
+  display: flex;
+  flex-direction: column;
+  padding: 2em 3em;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.form-container > h1 {
+  font-size: 4em;
+  text-transform: uppercase;
+  color: #2c554f;
+  margin: 15px;
+}
+
+.fadeout {
+  opacity: 1;
+  transition: opacity 1.7s;
+  animation: fadeout 1.7s forwards;
+}
+
+.fadein {
+  opacity: 0;
+  transition: opacity 1.7s;
+  animation: fadein 1.7s forwards;
+}
+
+.highlighted-text {
+  color: #4daa57;
+}
+.account-type-selector {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px 5px;
+  box-sizing: border-box;
+  border-top: 1px dashed #2c554f;
+  padding-top: 15px;
+}
+
+.account-type-selector {
+  display: flex;
+  align-items: center;
+}
+
+.account-type-selector > h3 {
+  color: #2c554f;
+  font-size: larger;
+}
+
+.account-type-option > label {
+  color: #2c554f;
+  margin-left: 5px;
+  font-size: larger;
+  font-weight: 500;
+}
+
+.account-type-option > input {
+  cursor: pointer;
+  accent-color: #4daa57;
+}
+
+@keyframes fadeout {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

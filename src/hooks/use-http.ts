@@ -26,12 +26,15 @@ const useHttp = (url: string) => {
       });
 
       if (!response.ok) {
+        console.log(response);
         throw new HTTPError("failed to fetch");
       }
+
       const data = await response.json();
-      console.log(data);
-      return data;
+
       setIsLoading(false);
+
+      return data;
     } catch (error) {
       if (error instanceof HTTPError) {
         setIsLoading(false);
@@ -41,8 +44,38 @@ const useHttp = (url: string) => {
     }
   };
 
+  const post = async (body: any) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify(body),
+        headers: {
+          "Content-type": "application/json",
+        },
+      });
+
+      const response_message = await response.json();
+
+      if (!response.ok) {
+        throw new HTTPError(response_message.message);
+      }
+
+      console.log(response_message);
+      setIsLoading(false);
+    } catch (error) {
+      if (error instanceof HTTPError) {
+        setIsLoading(false);
+        setError(error.message || "something went wrong");
+        console.log("error");
+      }
+    }
+  };
   return {
+    isLoading,
+    error,
     get,
+    post,
   };
 };
 

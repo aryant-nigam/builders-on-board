@@ -4,8 +4,8 @@
   border-radius: 50%;
   align-self: center;
   margin: 50px;
-  border: 10px solid rgb(231, 190, 231);
-  border-top: 10px solid purple;
+  border: 7px solid rgb(217, 215, 215);
+  border-top: 7px solid #2c554f;
   animation: spin 1.5s linear 0s infinite;
 }
 @keyframes spin {

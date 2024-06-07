@@ -16,7 +16,7 @@ interface Ioutput {
 const useInput = ({
   validator,
 }: {
-  validator: (value: string) => boolean;
+  validator: (value: any) => boolean;
 }): Ioutput => {
   const [value, setValue] = useState<string>("");
   const [isTouched, setIsTouched] = useState<boolean>(false);

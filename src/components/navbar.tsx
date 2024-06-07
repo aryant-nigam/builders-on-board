@@ -23,21 +23,21 @@ function Navbar() {
         <Link href="/" className={classes["nav-option"]}>
           Home
         </Link>
-        {accessToken && (
+        {
           <Link href="/services" className={classes["nav-option"]}>
             Services
           </Link>
-        )}
-        {!accessToken && (
+        }
+        {
           <Link href="/account" className={classes["nav-option"]}>
             Account
           </Link>
-        )}
-        {accessToken && (
+        }
+        {
           <Link href="/profile" className={classes["nav-option"]}>
             Profile
           </Link>
-        )}
+        }
       </ul>
     </nav>
   );

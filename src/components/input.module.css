@@ -10,12 +10,16 @@
 }
 .input {
   padding: 10px;
-  width: 100%;
+
   border-radius: 5px;
   outline: 0px;
   border: 1px solid black;
   font-size: 1.5em;
   box-sizing: border-box;
+}
+
+.input-optional {
+  width: 100%;
 }
 
 .input-error-holder {

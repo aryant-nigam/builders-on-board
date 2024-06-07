@@ -6,6 +6,7 @@
 .html {
   box-sizing: border-box;
   display: flex;
+  overflow-x: hidden;
 }
 
 .body {
@@ -15,4 +16,17 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden;
+}
+
+#footer {
+  z-index: 15;
+  height: fit-content;
+  width: fit-content;
+  position: sticky;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  padding-bottom: 10px;
+  background-color: azure;
 }
