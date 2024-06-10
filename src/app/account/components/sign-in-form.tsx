@@ -6,11 +6,15 @@ import Input from "@/components/input";
 import { useAppDispatch } from "@/store/hooks";
 import { logIn } from "@/store/features/auth-slice";
 import { useRouter } from "next/navigation";
+import useHttp from "@/hooks/use-http";
 
-function SigninForm({ isFormVisible }: { isFormVisible: boolean }) {
+function SigninForm({ isLoginFormVisible }: { isLoginFormVisible: boolean }) {
   const dispatch = useAppDispatch();
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const router = useRouter();
+  const { login, isLoading, successMsg, errorMsg } = useHttp(
+    "https://builders-on-board-be-2.onrender.com/login"
+  );
 
   const showPassword = (event: React.MouseEvent<HTMLInputElement>) => {
     setIsPasswordVisible((prevState) => !prevState);
@@ -43,33 +47,36 @@ function SigninForm({ isFormVisible }: { isFormVisible: boolean }) {
   } = useInput({ validator: passwordValidator });
 
   useEffect(() => {
-    if (!isFormVisible) {
+    if (!isLoginFormVisible) {
       resetEmail();
       resetPassword();
     }
-  }, [isFormVisible]);
+  }, [isLoginFormVisible]);
 
   const formSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log(email, password);
     //send the request to API an get the details
-    dispatch(
-      logIn({
-        username: "Aryant",
-        accountType: "customer",
-        accessToken: "access_token",
-      })
-    );
-    resetEmail();
-    resetPassword();
-    router.replace("/");
+
+    login({ email, password });
+
+    // dispatch(
+    //   logIn({
+    //     username: "Aryant",
+    //     accountType: "customer",
+    //     accessToken: "access_token",
+    //   })
+    // );
+    // resetEmail();
+    // resetPassword();
+    // router.replace("/");
   };
 
   return (
     <form
       onSubmit={formSubmitHandler}
       className={`${classes["form"]} ${
-        isFormVisible ? classes["fadein"] : classes["fadeout"]
+        isLoginFormVisible ? classes["fadein"] : classes["fadeout"]
       }`}
     >
       <h1>

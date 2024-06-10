@@ -5,14 +5,35 @@ import classes from "./form.module.css";
 import Input from "@/components/input";
 import { useState, useEffect } from "react";
 import { useAppDispatch } from "@/store/hooks";
-import { logIn } from "@/store/features/auth-slice";
 import { useRouter } from "next/navigation";
+import useHttp from "@/hooks/use-http";
+import Backdrop from "@/components/backdrop";
+import Loader from "@/components/loader";
+import Snackbar from "@/components/snackbar";
+import { error } from "console";
 
-function SignupFormBuilder({ isFormVisible }: { isFormVisible: boolean }) {
+function SignupFormBuilder({
+  isLoginFormVisible,
+  postSignUpHandler,
+}: {
+  isLoginFormVisible: boolean;
+  postSignUpHandler: () => void;
+}) {
+  const services = [
+    "electronics",
+    "pest control",
+    "painting",
+    "flooring",
+    "automobile washing",
+    "gardening",
+  ];
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const [signupStep, setSignupStep] = useState<number>(0);
-  const dispatch = useAppDispatch();
-  const router = useRouter();
+  const [serviceType, setserviceType] = useState(services[0]);
+
+  const { post, isLoading, errorMsg, successMsg, responseCode } = useHttp(
+    "https://builders-on-board-be-2.onrender.com/builder"
+  );
 
   const showPassword = (event: React.MouseEvent<HTMLInputElement>) => {
     setIsPasswordVisible((prevState) => !prevState);
@@ -143,7 +164,7 @@ function SignupFormBuilder({ isFormVisible }: { isFormVisible: boolean }) {
   } = useInput({ validator: reenteredPasswordValidator });
 
   useEffect(() => {
-    if (!isFormVisible) {
+    if (!isLoginFormVisible) {
       resetEmail();
       resetFirstName();
       resetLastName();
@@ -153,18 +174,21 @@ function SignupFormBuilder({ isFormVisible }: { isFormVisible: boolean }) {
       resetAddress();
       resetPassword();
       resetReenteredPassword();
+      setSignupStep(0);
     }
-  }, [isFormVisible]);
+  }, [isLoginFormVisible]);
 
   const formSubmitHandler = () => {
-    console.log(email, firstName, lastName, fee, pincode, address, password);
-    //send an API request to sign up and if everything goes fine log in the user else state the error.
-    // dispatch(
-    //   logIn({
-    //     username: "Aryant",
-    //     accessToken: "access_token",
-    //   })
-    // );
+    post({
+      email: email.toLowerCase(),
+      firstname: firstName.toLowerCase(),
+      lastname: lastName.toLowerCase(),
+      service_type: serviceType,
+      password: password,
+      fee: fee,
+      pincode: pincode,
+      phn_no: phn_no,
+    });
 
     resetEmail();
     resetFirstName();
@@ -175,8 +199,11 @@ function SignupFormBuilder({ isFormVisible }: { isFormVisible: boolean }) {
     resetAddress();
     resetPassword();
     resetReenteredPassword();
-    // router.replace("/");
   };
+
+  useEffect(() => {
+    if (responseCode === 409 || successMsg) postSignUpHandler();
+  }, [successMsg, responseCode, errorMsg]);
 
   const movePrevhandler = () => {
     setSignupStep((prevStep) => prevStep - 1);
@@ -186,12 +213,26 @@ function SignupFormBuilder({ isFormVisible }: { isFormVisible: boolean }) {
     setSignupStep((prevStep) => prevStep + 1);
   };
 
+  const serviceChangeHandler = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setserviceType(event.target.value);
+  };
+
   return (
     <div
       className={`${classes["sign-up-form-builder"]} ${
-        isFormVisible ? classes["fadein"] : classes["fadeout"]
+        isLoginFormVisible ? classes["fadein"] : classes["fadeout"]
       }`}
     >
+      {isLoading && (
+        <Backdrop>
+          <Loader />
+        </Backdrop>
+      )}
+      {errorMsg && <Snackbar message={errorMsg}></Snackbar>}
+      {successMsg && <Snackbar message={successMsg}></Snackbar>}
+
       {signupStep === 0 && (
         <div className={classes["form-segment"]}>
           <div className={classes["fields-container"]}>
@@ -313,6 +354,24 @@ function SignupFormBuilder({ isFormVisible }: { isFormVisible: boolean }) {
       {signupStep === 2 && (
         <div className={classes["form-segment"]}>
           <div className={classes["fields-container"]}>
+            <h2 className={classes["services-label"]}>Expertise :</h2>
+            <select
+              className={classes["services"]}
+              onChange={serviceChangeHandler}
+              defaultValue={serviceType}
+            >
+              {services.map((service, index) => (
+                <option
+                  className={classes["service"]}
+                  value={service}
+                  key={index}
+                >
+                  {service}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className={classes["fields-container"]}>
             <Input
               type="password"
               value={password}
@@ -342,6 +401,7 @@ function SignupFormBuilder({ isFormVisible }: { isFormVisible: boolean }) {
               className={classes["show-password-choice"]}
               type="checkbox"
               value="hide"
+              checked={isPasswordVisible}
               onClick={showPassword}
             ></input>
             <label> Show password</label>

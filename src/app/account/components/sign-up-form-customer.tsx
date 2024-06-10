@@ -10,11 +10,18 @@ import { useRouter } from "next/navigation";
 import useHttp from "@/hooks/use-http";
 import Loader from "@/components/loader";
 import Backdrop from "@/components/backdrop";
+import Snackbar from "@/components/snackbar";
 
-function SignupFormCustomer({ isFormVisible }: { isFormVisible: boolean }) {
+function SignupFormCustomer({
+  isLoginFormVisible,
+  postSignUpHandler,
+}: {
+  isLoginFormVisible: boolean;
+  postSignUpHandler: () => void;
+}) {
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const [signupStep, setSignupStep] = useState<number>(0);
-  const { post, isLoading, error } = useHttp(
+  const { post, isLoading, errorMsg, successMsg, responseCode } = useHttp(
     "https://builders-on-board-be-2.onrender.com/customer"
   );
 
@@ -92,38 +99,34 @@ function SignupFormCustomer({ isFormVisible }: { isFormVisible: boolean }) {
   } = useInput({ validator: reenteredPasswordValidator });
 
   useEffect(() => {
-    if (!isFormVisible) {
+    if (!isLoginFormVisible) {
       resetEmail();
       resetFirstName();
       resetLastName();
       resetPassword();
       resetReenteredPassword();
+      setSignupStep(0);
     }
-  }, [isFormVisible]);
+  }, [isLoginFormVisible]);
 
   const formSubmitHandler = () => {
-    console.log(firstName, lastName, email, password);
     post({
       email: email.toLowerCase(),
-      first_name: firstName.toLowerCase(),
-      last_name: lastName.toLowerCase(),
+      firstname: firstName.toLowerCase(),
+      lastname: lastName.toLowerCase(),
       password: password,
     });
-    //send an API request to sign up and if everything goes fine log in the user else state the error.
-    // dispatch(
-    //   logIn({
-    //     username: "Aryant",
-    //     accessToken: "access_token",
-    //   })
-    // );
 
-    // resetEmail();
-    // resetFirstName();
-    // resetLastName();
-    // resetPassword();
-    // resetReenteredPassword();
-    // router.replace("/");
+    resetEmail();
+    resetFirstName();
+    resetLastName();
+    resetPassword();
+    resetReenteredPassword();
   };
+
+  useEffect(() => {
+    if (responseCode === 409 || successMsg) postSignUpHandler();
+  }, [successMsg, responseCode]);
 
   const movePrevhandler = () => {
     setSignupStep((prevStep) => prevStep - 1);
@@ -136,7 +139,7 @@ function SignupFormCustomer({ isFormVisible }: { isFormVisible: boolean }) {
   return (
     <div
       className={`${classes["sign-up-form-customer"]} ${
-        isFormVisible ? classes["fadein"] : classes["fadeout"]
+        isLoginFormVisible ? classes["fadein"] : classes["fadeout"]
       }`}
     >
       {isLoading && (
@@ -145,6 +148,8 @@ function SignupFormCustomer({ isFormVisible }: { isFormVisible: boolean }) {
         </Backdrop>
       )}
 
+      {errorMsg && <Snackbar message={errorMsg}></Snackbar>}
+      {successMsg && <Snackbar message={successMsg}></Snackbar>}
       {signupStep === 0 && (
         <div className={classes["form-segment"]}>
           <Input
@@ -224,7 +229,7 @@ function SignupFormCustomer({ isFormVisible }: { isFormVisible: boolean }) {
             <input
               className={classes["show-password-choice"]}
               type="checkbox"
-              value="hide"
+              checked={isPasswordVisible}
               onClick={showPassword}
             ></input>
             <label> Show password</label>

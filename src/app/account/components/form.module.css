@@ -209,3 +209,21 @@
   margin-right: 3px;
   transform: rotate(90deg);
 }
+.services {
+  box-sizing: border-box;
+  cursor: pointer;
+  width: 75%;
+  margin: 0px 5px;
+  height: 100%;
+  font-size: 1.5em;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid black;
+  text-transform: capitalize;
+  outline: none;
+}
+.services-label {
+  align-self: center;
+  font-weight: 500;
+  margin: 5px;
+}

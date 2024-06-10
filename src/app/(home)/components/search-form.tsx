@@ -2,7 +2,14 @@
 import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import classes from "./search-form.module.css";
 import useHttp from "@/hooks/use-http";
-const services = ["electronics", "pest control", "painting", "flooring"];
+const services = [
+  "electronics",
+  "pest control",
+  "painting",
+  "flooring",
+  "automobile washing",
+  "gardening",
+];
 
 function SearchForm() {
   const [selectedService, setSelectedService] = useState(services[0]);

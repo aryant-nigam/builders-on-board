@@ -5,7 +5,13 @@ import { useState, useEffect } from "react";
 import SignupFormCustomer from "./sign-up-form-customer";
 import SignupFormBuilder from "./sign-up-form-builder";
 
-function SignupForm({ isFormVisible }: { isFormVisible: boolean }) {
+function SignupForm({
+  isLoginFormVisible,
+  postSignUpHandler,
+}: {
+  isLoginFormVisible: boolean;
+  postSignUpHandler: () => void;
+}) {
   const [accountType, setAccountType] = useState<string>("customer");
 
   const accountTypeSwitchHandler = (accType: string) => {
@@ -14,16 +20,16 @@ function SignupForm({ isFormVisible }: { isFormVisible: boolean }) {
 
   useEffect(() => {
     return () => {
-      if (!isFormVisible) {
+      if (!isLoginFormVisible) {
         setAccountType("customer");
       }
     };
-  }, [isFormVisible]);
+  }, [isLoginFormVisible]);
 
   return (
     <div
       className={`${classes["form-container"]} ${
-        isFormVisible ? classes["fadein"] : classes["fadeout"]
+        isLoginFormVisible ? classes["fadein"] : classes["fadeout"]
       }`}
     >
       <h1>
@@ -31,9 +37,15 @@ function SignupForm({ isFormVisible }: { isFormVisible: boolean }) {
       </h1>
 
       {accountType === "customer" ? (
-        <SignupFormCustomer isFormVisible={isFormVisible} />
+        <SignupFormCustomer
+          isLoginFormVisible={isLoginFormVisible}
+          postSignUpHandler={postSignUpHandler}
+        />
       ) : (
-        <SignupFormBuilder isFormVisible={isFormVisible}></SignupFormBuilder>
+        <SignupFormBuilder
+          isLoginFormVisible={isLoginFormVisible}
+          postSignUpHandler={postSignUpHandler}
+        ></SignupFormBuilder>
       )}
 
       <div className={classes["account-type-selector"]}>
