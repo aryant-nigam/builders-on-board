@@ -1,35 +1,56 @@
 "use client";
 import { createSlice } from "@reduxjs/toolkit";
 
+interface Iuser {
+  id: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+  is_builder: boolean;
+}
+
+export interface DecodedToken {
+  csrf: string;
+  exp: number;
+  fresh: boolean;
+  iat: number;
+  jti: string;
+  nbf: number;
+  sub: Iuser;
+  type: string;
+}
+
 interface IAuth {
-  username: string | null;
-  accountType: boolean | null;
+  user: Iuser | null;
   accessToken: string | null;
+  refreshToken: string | null;
 }
 
 const initialState: IAuth = {
-  username: null,
-  accountType: null,
+  user: null,
   accessToken: null,
+  refreshToken: null,
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    logOut: (state, actions) => {
-      state.username = null;
-      state.accountType = null;
+    removeAuthenticatedUserDetails: (state, actions) => {
+      state.user = null;
       state.accessToken = null;
+      state.refreshToken = null;
     },
-    logIn: (state, actions) => {
-      console.log(actions.payload);
-      state.username = actions.payload.username;
-      state.accountType = actions.payload.accountType;
+    setAuthenticatedUserDetails: (state, actions) => {
+      console.log(actions);
+      state.user = actions.payload.user;
       state.accessToken = actions.payload.accessToken;
+      state.refreshToken = actions.payload.refreshToken;
     },
   },
 });
 
-export const { logIn, logOut } = authSlice.actions;
+export const { setAuthenticatedUserDetails, removeAuthenticatedUserDetails } =
+  authSlice.actions;
+
 export default authSlice.reducer;

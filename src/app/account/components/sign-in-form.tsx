@@ -4,13 +4,28 @@ import classes from "./form.module.css";
 import useInput from "@/hooks/use-input";
 import Input from "@/components/input";
 import { useAppDispatch } from "@/store/hooks";
-import { logIn } from "@/store/features/auth-slice";
+import {
+  setAuthenticatedUserDetails,
+  DecodedToken,
+} from "@/store/features/auth-slice";
 import { useRouter } from "next/navigation";
 import useHttp from "@/hooks/use-http";
+import { decodeToken, isExpired } from "react-jwt";
+import { useCookies } from "react-cookie";
+import Snackbar from "@/components/snackbar";
+import Backdrop from "@/components/backdrop";
+import Loader from "@/components/loader";
 
-function SigninForm({ isLoginFormVisible }: { isLoginFormVisible: boolean }) {
+function SigninForm({
+  isLoginFormVisible,
+  postSignUpHandler,
+}: {
+  isLoginFormVisible: boolean;
+  postSignUpHandler: () => void;
+}) {
   const dispatch = useAppDispatch();
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+  const [cookie, setCookie, removeCookie] = useCookies(["user"]);
   const router = useRouter();
   const { login, isLoading, successMsg, errorMsg } = useHttp(
     "https://builders-on-board-be-2.onrender.com/login"
@@ -55,22 +70,60 @@ function SigninForm({ isLoginFormVisible }: { isLoginFormVisible: boolean }) {
 
   const formSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(email, password);
-    //send the request to API an get the details
 
-    login({ email, password });
+    const loginHandler = async () => {
+      const tokens = await login({ email, password }, null);
 
-    // dispatch(
-    //   logIn({
-    //     username: "Aryant",
-    //     accountType: "customer",
-    //     accessToken: "access_token",
-    //   })
-    // );
+      if (tokens) {
+        const userAccessToken: DecodedToken = decodeToken(tokens.access_token)!;
+        const userRefreshToken: DecodedToken = decodeToken(
+          tokens.refresh_token
+        )!;
+
+        console.log(
+          isExpired(tokens.access_token),
+          isExpired(tokens.refresh_token)
+        );
+
+        removeCookie("user");
+
+        setCookie(
+          "user",
+          JSON.stringify({
+            accessToken: tokens.access_token,
+            refreshToken: tokens.refresh_token,
+          }),
+          {
+            path: "/",
+            sameSite: true,
+            secure: true,
+            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          }
+        );
+
+        console.log(tokens.access_token);
+        console.log(tokens.refresh_token);
+
+        dispatch(
+          setAuthenticatedUserDetails({
+            user: userAccessToken.sub,
+            accessToken: tokens.access_token,
+            refreshToken: tokens.refresh_token,
+          })
+        );
+      }
+    };
+
+    loginHandler();
+
     // resetEmail();
     // resetPassword();
     // router.replace("/");
   };
+
+  useEffect(() => {
+    errorMsg && postSignUpHandler();
+  }, [errorMsg]);
 
   return (
     <form
@@ -79,6 +132,14 @@ function SigninForm({ isLoginFormVisible }: { isLoginFormVisible: boolean }) {
         isLoginFormVisible ? classes["fadein"] : classes["fadeout"]
       }`}
     >
+      {isLoading && (
+        <Backdrop>
+          <Loader />
+        </Backdrop>
+      )}
+      {successMsg && <Snackbar message={successMsg}></Snackbar>}
+      {errorMsg && <Snackbar message={errorMsg}></Snackbar>}
+
       <h1>
         Sign <span className={classes["highlighted-text"]}>In</span>{" "}
       </h1>

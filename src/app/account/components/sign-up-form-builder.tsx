@@ -4,13 +4,11 @@ import useInput from "@/hooks/use-input";
 import classes from "./form.module.css";
 import Input from "@/components/input";
 import { useState, useEffect } from "react";
-import { useAppDispatch } from "@/store/hooks";
-import { useRouter } from "next/navigation";
+
 import useHttp from "@/hooks/use-http";
 import Backdrop from "@/components/backdrop";
 import Loader from "@/components/loader";
 import Snackbar from "@/components/snackbar";
-import { error } from "console";
 
 function SignupFormBuilder({
   isLoginFormVisible,

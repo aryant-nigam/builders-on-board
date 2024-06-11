@@ -104,31 +104,44 @@ const useHttp = (url: string) => {
     }
   };
 
-  const login = async (body: any) => {
+  const login = async (
+    body: any | null = null,
+    refreshToken: string | null = null
+  ) => {
+    let requestParams: any = {
+      method: body ? "POST" : "GET",
+      headers: {
+        "Content-type": "application/json",
+      },
+    };
+
+    if (body && refreshToken) {
+      return null;
+    }
+
+    if (body) {
+      requestParams["body"] = body;
+    }
+
+    if (refreshToken) {
+      requestParams.headers["Authorization"] = `Bearer ${refreshToken}`;
+    }
+
     try {
-      console.log(body);
       setIsLoading(true);
-      const response = await fetch(url, {
-        method: "POST",
-        body: JSON.stringify(body),
-        headers: {
-          "Content-type": "application/json",
-        },
-      });
+      const response = await fetch(url, requestParams);
 
       const response_json = await response.json();
       console.log(response_json);
-      return;
       if (!response.ok) {
         setResponseCode(response_json.code);
-        throw new HTTPError(response_json.message);
+        throw new HTTPError(response_json.message + ". Try signing up!");
       }
 
       setIsLoading(false);
       setResponseCode(200);
-      setSuccessMsg(response_json.message);
-
-      console.log(response_json.message);
+      setSuccessMsg("Logged in successfully");
+      return response_json;
     } catch (error) {
       if (error instanceof HTTPError) {
         console.log(error);

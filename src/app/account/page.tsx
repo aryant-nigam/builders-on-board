@@ -40,7 +40,10 @@ function AccountPage() {
     <div className={classes["account-page"]}>
       <div className={classes["account-page-section-container"]}>
         <div className={classes["account-page-signin-section"]}>
-          <SigninForm isLoginFormVisible={isLoginFormVisible} />
+          <SigninForm
+            isLoginFormVisible={isLoginFormVisible}
+            postSignUpHandler={toggleHandler}
+          />
         </div>
         <div className={classes["account-page-signup-section"]}>
           <SignupForm
