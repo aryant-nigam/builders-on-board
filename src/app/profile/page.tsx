@@ -30,7 +30,8 @@ function ProfilePage() {
         <h1>
           Hello,&nbsp;
           <span className={classes["highlighted-text"]}>
-            {titleCase(firstName!)} {titleCase(lastName!)} !
+            {firstName && titleCase(firstName)}{" "}
+            {lastName && titleCase(lastName!)} !
           </span>
           &nbsp; let's look at the services you availed
         </h1>

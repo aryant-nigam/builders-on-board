@@ -1,5 +1,5 @@
 .service-page {
-  height: 88vh;
+  height: fit-content;
   width: 100vw;
   display: flex;
   flex-direction: row;

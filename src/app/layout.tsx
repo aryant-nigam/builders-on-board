@@ -29,7 +29,7 @@ export default function RootLayout({
           <Navbar />
           {children}
         </StoreProvider>
-        <footer id="footer"></footer>
+        <div id="footer"></div>
       </body>
     </html>
   );

@@ -1,13 +1,15 @@
 .account-page {
-  height: 88vh;
+  height: 89vh;
   /* background-color: red; */
   width: 100vw;
   box-sizing: border-box;
-  /* display: flex;
-  flex-direction: row; */
+
   align-items: center;
   justify-content: center;
   position: relative;
+
+  overflow-y: hidden;
+  margin: 0px;
 }
 
 .account-page-section-container {
