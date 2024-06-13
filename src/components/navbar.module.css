@@ -52,6 +52,10 @@
   color: #2c554f;
 }
 
+.active-nav-option {
+  border-bottom: 2px solid #4daa57;
+}
+
 .nav-option:hover {
   color: #4daa57;
 }

@@ -5,17 +5,19 @@ import classes from "./input.module.css";
 interface IInput {
   type: string;
   value: string;
-  valueHasError: boolean;
-  errorMsg: string;
+  isDiabled?: boolean;
+  valueHasError?: boolean;
+  errorMsg?: string;
   placeholder?: string;
-  updateValueOnKeyStroke: (event: React.FocusEvent<HTMLInputElement>) => void;
-  updateIsTouched: (event: React.FocusEvent<HTMLInputElement>) => void;
+  updateValueOnKeyStroke?: (event: React.FocusEvent<HTMLInputElement>) => void;
+  updateIsTouched?: (event: React.FocusEvent<HTMLInputElement>) => void;
   isPasswordVisible?: boolean;
   className?: string;
 }
 function Input({
   type,
   value,
+  isDiabled,
   valueHasError,
   errorMsg,
   placeholder,
@@ -37,6 +39,7 @@ function Input({
         placeholder={placeholder}
         onChange={updateValueOnKeyStroke}
         onBlur={updateIsTouched}
+        disabled={isDiabled}
       ></input>
       {valueHasError && (
         <div className={classes["input-error-holder"]}>

@@ -1,4 +1,5 @@
 .service-details {
+  margin-top: 2em;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -20,6 +21,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  margin: 5px 0px;
 }
 
 .details-label {
@@ -37,4 +39,5 @@
   width: 100%;
   height: 1px;
   border-top: 2px dashed black;
+  margin: 10px 0px;
 }

@@ -1,8 +1,8 @@
-.worker-card {
+.builder-card {
   display: flex;
   flex-direction: column;
   width: 200px;
-  height: fit-content;
+  height: 250px;
   background-color: #2c554f;
   border: 2px solid #2c554f;
   align-items: center;
@@ -13,47 +13,36 @@
   color: #fff;
   cursor: pointer;
   position: relative;
+  justify-content: space-evenly;
 }
 
-.worker-image {
+.builder-image {
   width: 70px;
   height: 70px;
   object-fit: cover;
   border-radius: 50%;
 }
 
-.worker-name {
+.builder-name {
   margin: 10px;
   text-align: center;
-  margin-top: 0px;
 }
 
-.worker-id {
-  margin: 10px;
-}
-
-.worker-expertise {
-  margin: 10px;
-  text-transform: uppercase;
+.builder-expertise {
   color: #4daa57;
-  margin-top: 0px;
-  text-align: center;
+  text-transform: capitalize;
 }
 
-.experience,
 .fee {
   width: 100%;
   margin-top: 0px;
   font-weight: 500;
   display: flex;
   justify-content: space-between;
-}
 
-.fee {
   margin: 0px;
 }
 
-.exp-title,
 .fee-title {
   font-weight: 600;
 }

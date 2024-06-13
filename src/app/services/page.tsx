@@ -1,20 +1,44 @@
 "use client";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import classes from "./page.module.css";
 import CategorySegment from "./components/category-segment";
 import VerticalStepper from "./components/vertical-stepper";
 import useInput from "@/hooks/use-input";
 import Input from "@/components/input";
 import ServiceDetails from "./components/service-details";
-import { Iworker } from "./components/category-segment";
+import { Builder } from "./components/category-segment";
 import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/store/hooks";
+import useHttp from "@/hooks/use-http";
+import Backdrop from "@/components/backdrop";
+import Loader from "@/components/loader";
+import Snackbar from "@/components/snackbar";
+import { useAppDispatch } from "@/store/hooks";
+import { removeAuthenticatedUserDetails } from "@/store/features/auth-slice";
 
 const categories: string[] = [
+  "electronics",
+  "pest control",
   "painting",
-  "pest cleaning",
-  "carpentry",
-  "electrical work",
+  "flooring",
+  "automobile washing",
+  "gardening",
 ];
+
+interface ICustomer {
+  firstname: string;
+  lastname: string;
+  email: string;
+  phoneNumber: string;
+  address: string;
+  pincode: string;
+  landmark?: string; // Optional property
+}
+
+interface IService {
+  timestamp: number; // Assuming timestamp is in milliseconds since epoch
+  description: string;
+}
 
 const steps = [
   {
@@ -30,31 +54,32 @@ const steps = [
 ];
 
 function ServicesPage() {
+  const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const customerId = useAppSelector((state) => state.auth.user?.id);
+  const firstname =
+    useAppSelector((state) => state.auth.user?.firstname) || " ";
+  const lastname = useAppSelector((state) => state.auth.user?.lastname) || " ";
+  const email = useAppSelector((state) => state.auth.user?.email) || " ";
+  const addressInitVal = useAppSelector(
+    (state) => state.auth.userPersonalInformation?.address
+  );
+  const phnNoInitVal = useAppSelector(
+    (state) => state.auth.userPersonalInformation?.phoneNumber
+  );
+  const pincodeInitVal = useAppSelector(
+    (state) => state.auth.userPersonalInformation?.pincode
+  );
+  const landmarkInitVal = useAppSelector(
+    (state) => state.auth.userPersonalInformation?.landmark
+  );
+
   const router = useRouter();
-
-  const fetchValues = (details: any) => {
-    setDetails((prevState) => {
-      return { ...prevState, ...details };
-    });
-  };
-
-  const firstnameValidator = (firstname: string): boolean => {
-    return firstname.trim().length > 2;
-  };
-
-  const lastnameValidator = (lastname: string): boolean => {
-    return lastname.trim().length > 0;
-  };
+  const dispatch = useAppDispatch();
 
   const phoneNumberValidator = (phnNo: string): boolean => {
     return (
       phnNo.trim().length === 10 && ["9", "8", "7", "6"].includes(phnNo[0])
     );
-  };
-
-  const emailValidator = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
   };
 
   const addressValidator = (address: string): boolean => {
@@ -70,40 +95,16 @@ function ServicesPage() {
   };
 
   const {
-    value: firstname,
-    isValid: isFirstnameValid,
-    hasError: firstnameHasError,
-    updateValueOnKeyStroke: updateFirstnameOnKeystroke,
-    updateIsTouched: updateIsFirstnameTouched,
-    reset: resetFirstname,
-  } = useInput({ validator: firstnameValidator });
-
-  const {
-    value: lastname,
-    isValid: isLastnameValid,
-    hasError: lastnameHasError,
-    updateValueOnKeyStroke: updateLastnameOnKeystroke,
-    updateIsTouched: updateIsLastnameTouched,
-    reset: resetLastname,
-  } = useInput({ validator: lastnameValidator });
-
-  const {
     value: phoneNumber,
     isValid: isPhoneNumberValid,
     hasError: phoneNumberHasError,
     updateValueOnKeyStroke: updatePhoneNumberOnKeystroke,
     updateIsTouched: updateIsPhoneNumberTouched,
     reset: resetPhoneNumber,
-  } = useInput({ validator: phoneNumberValidator });
-
-  const {
-    value: email,
-    isValid: isEmailValid,
-    hasError: emailHasError,
-    updateValueOnKeyStroke: updateEmailOnKeystroke,
-    updateIsTouched: updateIsEmailTouched,
-    reset: resetEmail,
-  } = useInput({ validator: emailValidator });
+    initialize: initializePhoneNumber,
+  } = useInput({
+    validator: phoneNumberValidator,
+  });
 
   const {
     value: address,
@@ -112,6 +113,7 @@ function ServicesPage() {
     updateValueOnKeyStroke: updateAddressOnKeystroke,
     updateIsTouched: updateIsAddressTouched,
     reset: resetAddress,
+    initialize: initializeAddress,
   } = useInput({ validator: addressValidator });
 
   const {
@@ -121,6 +123,7 @@ function ServicesPage() {
     updateValueOnKeyStroke: updatePincodeOnKeystroke,
     updateIsTouched: updateIsPincodeTouched,
     reset: resetPincode,
+    initialize: initializePincode,
   } = useInput({ validator: pincodeValidator });
 
   const {
@@ -130,15 +133,31 @@ function ServicesPage() {
     updateValueOnKeyStroke: updateLandmarkOnKeystroke,
     updateIsTouched: updateIsLandmarkTouched,
     reset: resetLandmark,
-  } = useInput({ validator: landmarkValidator });
+    initialize: initializeLandmark,
+  } = useInput({
+    validator: landmarkValidator,
+  });
 
+  useEffect(() => {
+    if (landmarkInitVal) initializeLandmark(landmarkInitVal);
+    if (phnNoInitVal) initializePhoneNumber(phnNoInitVal);
+    if (addressInitVal) initializeAddress(addressInitVal);
+    if (pincodeInitVal) initializePincode(pincodeInitVal);
+  }, [phnNoInitVal, addressInitVal, pincodeInitVal, landmarkInitVal]);
+
+  const [totalSteps, setTotalSteps] = useState<number>(steps.length);
   const [activeStep, setActiveStep] = useState(1);
   const [description, setDescription] = useState<string>("");
   const [serviceType, setServiceType] = useState<string>("painting");
-  const [hasSaved, setHasSaved] = useState<boolean>(false);
-  const [workerSelected, setWorkerSelected] = useState<Iworker | null>(null);
-  const [serviceDetails, setServiceDetails] = useState({});
-  const [totalSteps, setTotalSteps] = useState<number>(steps.length);
+  const [
+    hasSavedCustomerAndServiceDetails,
+    setHasSavedCustomerAndServiceDetails,
+  ] = useState<boolean>(false);
+  const [builderSelected, setBuilderSelected] = useState<Builder | null>(null);
+  const [serviceDetails, setServiceDetails] = useState<IService | null>(null);
+  const [customerDetails, setCustomerDetails] = useState<ICustomer | null>(
+    null
+  );
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => {
@@ -154,8 +173,8 @@ function ServicesPage() {
     setActiveStep((prevActiveStep) => {
       if (prevActiveStep != 1) {
         if (prevActiveStep - 1 == 1) {
-          setHasSaved(false);
-          setWorkerSelected(null);
+          setHasSavedCustomerAndServiceDetails(false);
+          setBuilderSelected(null);
           setTotalSteps(steps.length);
         }
         return prevActiveStep - 1;
@@ -175,39 +194,133 @@ function ServicesPage() {
     setDescription(event.target.value);
   };
 
-  const saveWorker = (worker: Iworker) => {
-    if (workerSelected == null) setTotalSteps(steps.length + 1);
-    setWorkerSelected(worker);
+  const saveBuilder = (worker: Builder) => {
+    if (builderSelected == null) setTotalSteps(steps.length + 1);
+    setBuilderSelected(worker);
   };
 
-  const saveCustomerDetails = (event: React.FormEvent) => {
+  const saveCustomerAndServiceDetails = (event: React.FormEvent) => {
     event.preventDefault();
-
-    setServiceDetails({
+    setCustomerDetails({
       firstname,
       lastname,
-      phoneNumber,
       email,
+      phoneNumber,
       address,
       pincode,
       landmark,
+    });
+    setServiceDetails({
+      timestamp: new Date().getTime(),
       description,
-      serviceType,
     });
 
-    setHasSaved(true);
+    setHasSavedCustomerAndServiceDetails(true);
     handleNext();
   };
 
+  const {
+    put,
+    isLoading: isLoadingOnCustomerUpdate,
+    errorMsg: errorMsgOnCustomerUpdate,
+    successMsg: successMsgOnCustomerUpdate,
+    responseCode,
+  } = useHttp(
+    `https://builders-on-board-be-2.onrender.com/customer?id=${customerId}`
+  );
+
+  const {
+    post,
+    isLoading: isLoadingOnCreateService,
+    errorMsg: errorMsgOnCreateService,
+    successMsg: successMsgOnCreateService,
+  } = useHttp(`https://builders-on-board-be-2.onrender.com/services`);
+
+  const createService = async () => {
+    const body = {
+      timestamp: `${Math.floor(serviceDetails?.timestamp! / 1000)}`,
+      description: serviceDetails?.description,
+      builder_id: builderSelected?.builder_id,
+      customer_id: customerId,
+    };
+    const response = post(body, accessToken);
+  };
+
+  const updateCustomerDetails = async () => {
+    let body = {};
+    if (phoneNumber !== phnNoInitVal) {
+      body = { ...body, phn_no: customerDetails!.phoneNumber };
+    }
+    if (address !== addressInitVal) {
+      body = { ...body, address: customerDetails!.address };
+    }
+    if (pincode !== pincodeInitVal) {
+      body = { ...body, pincode: customerDetails!.pincode };
+    }
+    if (landmark !== landmarkInitVal) {
+      body = { ...body, landmark: customerDetails!.landmark };
+    }
+    if (Object.keys(body).length !== 0) {
+      await put(body, accessToken);
+      if (responseCode === 200) {
+        createService();
+      }
+    } else {
+      await createService();
+    }
+  };
+
+  useEffect(() => {
+    if (
+      errorMsgOnCustomerUpdate === "Token has expired" ||
+      errorMsgOnCreateService === "Token has expired"
+    ) {
+      dispatch(removeAuthenticatedUserDetails());
+    }
+  }, [errorMsgOnCustomerUpdate, errorMsgOnCreateService]);
+
+  useEffect(() => {
+    if (successMsgOnCreateService) {
+      setTimeout(function () {
+        router.replace("/profile");
+      }, 3000);
+    }
+  }, [successMsgOnCreateService]);
+
   const submitHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
     //send the details to database after creating an object from customer and worker details
-    console.log(workerSelected);
-    console.log(serviceDetails);
-    router.replace("/home");
+    // console.log(builderSelected);
+    // console.log(serviceDetails);
+    updateCustomerDetails();
   };
 
   return (
     <div className={classes["service-page"]}>
+      {isLoadingOnCustomerUpdate ||
+        (isLoadingOnCreateService && (
+          <Backdrop>
+            <Loader />
+          </Backdrop>
+        ))}
+
+      {successMsgOnCustomerUpdate && (
+        <Snackbar message={successMsgOnCustomerUpdate} />
+      )}
+
+      {errorMsgOnCustomerUpdate &&
+        errorMsgOnCustomerUpdate !== "Token has expired" && (
+          <Snackbar message={errorMsgOnCustomerUpdate} />
+        )}
+
+      {successMsgOnCreateService && (
+        <Snackbar message={successMsgOnCreateService} />
+      )}
+
+      {errorMsgOnCreateService &&
+        errorMsgOnCreateService !== "Token has expired" && (
+          <Snackbar message={errorMsgOnCreateService} />
+        )}
+
       <div className={classes["service-page-left-section"]}>
         <h1 className={classes["service-page-heading"]}>
           Lets get you
@@ -221,8 +334,8 @@ function ServicesPage() {
           activeStep={activeStep}
           handleNext={handleNext}
           handleBack={handleBack}
-          hasSaved={hasSaved}
-          shouldRenderSubmissionStep={workerSelected !== null}
+          hasSaved={hasSavedCustomerAndServiceDetails}
+          shouldRenderSubmissionStep={builderSelected !== null}
           submitHandler={submitHandler}
         />
       </div>
@@ -230,7 +343,7 @@ function ServicesPage() {
         {activeStep === 1 && (
           <form
             className={classes["service-form"]}
-            onSubmit={saveCustomerDetails}
+            onSubmit={saveCustomerAndServiceDetails}
           >
             <div className={classes["details"]}>
               <h1>Personal information</h1>
@@ -241,32 +354,24 @@ function ServicesPage() {
                   </label>
                   <Input
                     type="text"
-                    value={firstname}
-                    valueHasError={firstnameHasError}
-                    placeholder="First Name"
-                    errorMsg="First Name cannot contain spaces"
-                    updateValueOnKeyStroke={updateFirstnameOnKeystroke}
-                    updateIsTouched={updateIsFirstnameTouched}
-                    className={classes.input}
+                    value={firstname!}
+                    isDiabled={true}
                   ></Input>
                 </div>
                 <div className={classes.container}>
                   <label className={classes.label}>
                     Last Name <span className={classes.mandatory}>*</span>
                   </label>
-                  <Input
-                    type="text"
-                    value={lastname}
-                    valueHasError={lastnameHasError}
-                    placeholder="Last Name"
-                    errorMsg="Last Name cannot contain spaces"
-                    updateValueOnKeyStroke={updateLastnameOnKeystroke}
-                    updateIsTouched={updateIsLastnameTouched}
-                    className={classes.input}
-                  ></Input>
+                  <Input type="text" value={lastname!} isDiabled={true}></Input>
                 </div>
               </div>
               <div className={classes["fields-container"]}>
+                <div className={classes.container}>
+                  <label className={classes.label}>
+                    Email <span className={classes.mandatory}>*</span>
+                  </label>
+                  <Input type="text" value={email!} isDiabled={true}></Input>
+                </div>
                 <div className={classes.container}>
                   <label className={classes.label}>
                     Phone number <span className={classes.mandatory}>*</span>
@@ -279,21 +384,6 @@ function ServicesPage() {
                     errorMsg="Invalid phone number"
                     updateValueOnKeyStroke={updatePhoneNumberOnKeystroke}
                     updateIsTouched={updateIsPhoneNumberTouched}
-                    className={classes.input}
-                  ></Input>
-                </div>
-                <div className={classes.container}>
-                  <label className={classes.label}>
-                    Email <span className={classes.mandatory}>*</span>
-                  </label>
-                  <Input
-                    type="text"
-                    value={email}
-                    valueHasError={emailHasError}
-                    placeholder="Email"
-                    errorMsg="Invalid email address"
-                    updateValueOnKeyStroke={updateEmailOnKeystroke}
-                    updateIsTouched={updateIsEmailTouched}
                     className={classes.input}
                   ></Input>
                 </div>
@@ -372,14 +462,11 @@ function ServicesPage() {
               value="Save"
               className={classes["save-btn"]}
               disabled={
-                firstnameHasError ||
-                lastnameHasError ||
                 phoneNumberHasError ||
-                emailHasError ||
                 addressHasError ||
                 pincodeHasError ||
                 landmarkHasError ||
-                description.trim().length == 0
+                description.trim().length < 20
               }
             ></input>
           </form>
@@ -387,15 +474,17 @@ function ServicesPage() {
 
         {activeStep === 2 && (
           <CategorySegment
-            category={serviceType}
+            serviceType={serviceType}
             pincode={pincode}
-            selectedWorker={workerSelected}
-            saveWorker={saveWorker}
+            selectedBuilder={builderSelected}
+            saveBuilder={saveBuilder}
           />
         )}
 
         {activeStep === 3 && (
-          <ServiceDetails details={{ serviceDetails, workerSelected }} />
+          <ServiceDetails
+            details={{ customerDetails, serviceDetails, builderSelected }}
+          />
         )}
       </div>
     </div>

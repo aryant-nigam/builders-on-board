@@ -72,18 +72,10 @@ function SigninForm({
     event.preventDefault();
 
     const loginHandler = async () => {
-      const tokens = await login({ email, password }, null);
+      const tokens = await login({ email, password });
 
       if (tokens) {
         const userAccessToken: DecodedToken = decodeToken(tokens.access_token)!;
-        const userRefreshToken: DecodedToken = decodeToken(
-          tokens.refresh_token
-        )!;
-
-        console.log(
-          isExpired(tokens.access_token),
-          isExpired(tokens.refresh_token)
-        );
 
         removeCookie("user");
 
@@ -100,9 +92,6 @@ function SigninForm({
             expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
           }
         );
-
-        console.log(tokens.access_token);
-        console.log(tokens.refresh_token);
 
         dispatch(
           setAuthenticatedUserDetails({

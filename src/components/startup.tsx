@@ -1,25 +1,44 @@
 "use client";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { useCookies } from "react-cookie";
-import { setAuthenticatedUserDetails } from "@/store/features/auth-slice";
+import {
+  setAuthenticatedUserDetails,
+  setAuthenticatedUserPersonalDetails,
+} from "@/store/features/auth-slice";
 import { decodeToken, isExpired } from "react-jwt";
 import { DecodedToken } from "@/store/features/auth-slice";
 import useHttp from "@/hooks/use-http";
 import { useEffect } from "react";
+import Backdrop from "./backdrop";
+import Loader from "./loader";
 
 const StartUp = () => {
+  console.log("called");
   const [cookie, setCookie, removeCookie] = useCookies(["user"]);
   const dispatch = useAppDispatch();
-  const { login, errorMsg } = useHttp(
-    "https://builders-on-board-be-2.onrender.com/refresh"
-  );
+  const user = useAppSelector((state) => state.auth.user);
+  const id = user?.id;
+  const jwt_token = useAppSelector((state) => state.auth.accessToken);
+  console.log("user", user);
+  const {
+    refresh,
+    isLoading: isLoadingOnRefresh,
+    errorMsg: errorMessageOnRefresh,
+  } = useHttp("https://builders-on-board-be-2.onrender.com/refresh");
+
+  const {
+    get,
+    isLoading: isLoadingOnGet,
+    errorMsg: errorMessageOnGet,
+  } = useHttp(`https://builders-on-board-be-2.onrender.com/customer?id=${id}`);
 
   useEffect(() => {
     const loginWithRefreshToken = async (refreshToken: string) => {
-      const token = await login(undefined, refreshToken);
-      console.log("wit refresh", token);
+      console.log(refreshToken);
+      const token = await refresh(refreshToken);
+      console.log("with refresh", token);
 
-      if (token)
+      if (token) {
         setCookie(
           "user",
           JSON.stringify({
@@ -34,23 +53,29 @@ const StartUp = () => {
           }
         );
 
-      const userAccessToken: DecodedToken = decodeToken(token.access_token)!;
+        const userAccessToken: DecodedToken = decodeToken(token.access_token)!;
 
-      dispatch(
-        setAuthenticatedUserDetails({
-          user: userAccessToken.sub,
-          accessToken: token.access_token,
-          refreshToken: null,
-        })
-      );
+        dispatch(
+          setAuthenticatedUserDetails({
+            user: userAccessToken.sub,
+            accessToken: token.access_token,
+            refreshToken: null,
+          })
+        );
+      } else if (errorMessageOnRefresh) {
+        removeCookie("user");
+      }
     };
 
-    if (cookie.user) {
+    if (cookie.user && !user) {
+      // first fetch the cookies from the browser
+      console.log("fetching user from cookies", cookie);
       const userAccessToken: DecodedToken = decodeToken(
         cookie.user.accessToken
       )!;
 
       if (!isExpired(cookie.user.accessToken)) {
+        //if browser cookie's access token has not expired the ininitalise the auth slice
         console.log("not expired");
         dispatch(
           setAuthenticatedUserDetails({
@@ -63,17 +88,47 @@ const StartUp = () => {
         cookie.user.refreshToken &&
         !isExpired(cookie.user.refreshToken)
       ) {
+        // if browser cookie's refresh token has not expired then regain the access with refresh token and
+        // initialise the auth slice
         console.log("expired");
         loginWithRefreshToken(cookie.user.refreshToken);
+      } else {
+        //if neither access token and refresh token is valid then user should login again manually
+        console.log("expired login again");
       }
     }
+  }, [user]);
 
-    if (errorMsg) {
-      removeCookie("user");
+  useEffect(() => {
+    if (id && jwt_token) {
+      console.log("triggered");
+      const fetchUserData = async () => {
+        const personal_data = await get(jwt_token);
+        if (personal_data) {
+          console.log(personal_data);
+          dispatch(
+            setAuthenticatedUserPersonalDetails({
+              address: personal_data.address,
+              landmark: personal_data.landmark,
+              phoneNumber: personal_data.phn_no,
+              pincode: personal_data.pincode,
+            })
+          );
+        }
+      };
+      fetchUserData();
     }
-  }, []);
+  }, [user, id, jwt_token]);
 
-  return <></>;
+  return (
+    <>
+      {(isLoadingOnRefresh || isLoadingOnGet) && (
+        <Backdrop>
+          <Loader />
+        </Backdrop>
+      )}
+    </>
+  );
 };
 
 export default StartUp;

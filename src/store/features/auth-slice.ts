@@ -9,6 +9,13 @@ interface Iuser {
   is_builder: boolean;
 }
 
+interface IPersonaInformation {
+  address: string | null;
+  landmark: string | null;
+  phoneNumber: string | null;
+  pincode: string | null;
+}
+
 export interface DecodedToken {
   csrf: string;
   exp: number;
@@ -22,12 +29,14 @@ export interface DecodedToken {
 
 interface IAuth {
   user: Iuser | null;
+  userPersonalInformation: IPersonaInformation | null;
   accessToken: string | null;
   refreshToken: string | null;
 }
 
 const initialState: IAuth = {
   user: null,
+  userPersonalInformation: null,
   accessToken: null,
   refreshToken: null,
 };
@@ -36,8 +45,10 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    removeAuthenticatedUserDetails: (state, actions) => {
+    removeAuthenticatedUserDetails: (state) => {
+      console.log("I am removing details");
       state.user = null;
+      state.userPersonalInformation = null;
       state.accessToken = null;
       state.refreshToken = null;
     },
@@ -47,10 +58,18 @@ const authSlice = createSlice({
       state.accessToken = actions.payload.accessToken;
       state.refreshToken = actions.payload.refreshToken;
     },
+
+    setAuthenticatedUserPersonalDetails: (state, actions) => {
+      console.log(actions.payload);
+      state.userPersonalInformation = actions.payload;
+    },
   },
 });
 
-export const { setAuthenticatedUserDetails, removeAuthenticatedUserDetails } =
-  authSlice.actions;
+export const {
+  setAuthenticatedUserDetails,
+  removeAuthenticatedUserDetails,
+  setAuthenticatedUserPersonalDetails,
+} = authSlice.actions;
 
 export default authSlice.reducer;

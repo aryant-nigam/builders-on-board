@@ -9,8 +9,14 @@ const Backdrop = ({ children }: { children: React.ReactNode }) => {
   );
 
   useEffect(() => {
+    document.documentElement.classList.remove(classes["backdrop-close"]);
     document.documentElement.classList.add(classes["backdrop-open"]);
     setBackdropContainer(document.querySelector("#backdrop"));
+
+    return () => {
+      // document.documentElement.classList.remove(classes["backdrop-open"]);
+      document.documentElement.classList.add(classes["backdrop-close"]);
+    };
   }, []);
 
   return backdropContainer

@@ -2,35 +2,38 @@ import React from "react";
 import classes from "./service-details.module.css";
 
 function ServiceDetails({ details }: { details: any }) {
+  console.log(details);
   return (
     <div className={classes["service-details"]}>
       <h1>Service Details</h1>
       <div className={classes.details}>
         <h4 className={classes["details-label"]}>Name:</h4>
         <p className={classes["details-value"]}>
-          {`${details.serviceDetails.firstname} ${details.serviceDetails.lastname}`}
+          {`${details.customerDetails.firstname} ${details.customerDetails.lastname}`}
         </p>
       </div>
       <div className={classes.details}>
         <h4 className={classes["details-label"]}>Phone Number:</h4>
         <p className={classes["details-value"]}>
-          {details.serviceDetails.phoneNumber}
+          {details.customerDetails.phoneNumber}
         </p>
       </div>
       <div className={classes.details}>
         <h4 className={classes["details-label"]}>Email:</h4>
         <p className={classes["details-value"]}>
-          {details.serviceDetails.email}
+          {details.customerDetails.email}
         </p>
       </div>
       <div className={classes.details}>
         <h4 className={classes["details-label"]}>Address:</h4>
         <p className={classes["details-value"]}>
-          {`${details.serviceDetails.address}, ${details.serviceDetails.pincode}
+          {`${details.customerDetails.address}, ${
+            details.customerDetails.pincode
+          }
            ${
              "near " +
-             (details.serviceDetails.landmark &&
-               details.serviceDetails.landmark)
+             (details.customerDetails.landmark &&
+               details.customerDetails.landmark)
            }`}
         </p>
       </div>
@@ -43,18 +46,28 @@ function ServiceDetails({ details }: { details: any }) {
       <hr className={classes.divider}></hr>
       <div className={classes.details}>
         <h4 className={classes["details-label"]}>Expert Id:</h4>
-        <p className={classes["details-value"]}>{details.workerSelected.id}</p>
+        <p className={classes["details-value"]}>
+          {details.builderSelected.builder_id}
+        </p>
       </div>
       <div className={classes.details}>
         <h4 className={classes["details-label"]}>Expert Name:</h4>
         <p className={classes["details-value"]}>
-          {details.workerSelected.name}
+          {details.builderSelected.firstname +
+            " " +
+            details.builderSelected.lastname}
+        </p>
+      </div>
+      <div className={classes.details}>
+        <h4 className={classes["details-label"]}>Service Type:</h4>
+        <p className={classes["details-value"]}>
+          {details.builderSelected.service_type}
         </p>
       </div>
       <div className={classes.details}>
         <h4 className={classes["details-label"]}>Charges:</h4>
         <p className={classes["details-value"]}>
-          ₹ {details.workerSelected.fee}
+          ₹ {details.builderSelected.fee}
         </p>
       </div>
     </div>

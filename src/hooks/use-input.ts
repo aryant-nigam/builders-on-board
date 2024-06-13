@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 
-interface Iinput {}
-
 interface Ioutput {
   value: string;
   isValid: boolean;
@@ -11,6 +9,7 @@ interface Ioutput {
   updateValueOnKeyStroke: (event: React.FocusEvent<HTMLInputElement>) => void;
   updateIsTouched: (event: React.FocusEvent<HTMLInputElement>) => void;
   reset: () => void;
+  initialize: (value: any) => void;
 }
 
 const useInput = ({
@@ -38,6 +37,9 @@ const useInput = ({
     setValue("");
     setIsTouched(false);
   };
+  const initialize = (value: any) => {
+    setValue(value);
+  };
 
   return {
     value,
@@ -46,6 +48,7 @@ const useInput = ({
     updateValueOnKeyStroke,
     updateIsTouched,
     reset,
+    initialize,
   };
 };
 

@@ -1,7 +1,10 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import classes from "./category-segment.module.css";
-import WorkerCard from "./worker-card";
+import BuilderCard from "./builder-card";
+import useHttp from "@/hooks/use-http";
+import { useAppSelector } from "@/store/hooks";
+import Loader from "@/components/loader";
 
 export interface Iworker {
   id: number;
@@ -13,146 +16,104 @@ export interface Iworker {
   fee: number;
 }
 
-const workersList: Iworker[] = [
-  {
-    id: 1122,
-    name: "Abhay Srivastava",
-    image: "worker-img.png",
-    expertise: "electrical work",
-    pincode: "225533",
-    experience: 3,
-    fee: 300,
-  },
-  {
-    id: 1123,
-    name: "Abhay Srivastava",
-    image: "worker-img.png",
-    expertise: "electrical work",
-    pincode: "225533",
-    experience: 3,
-    fee: 300,
-  },
-  {
-    id: 1124,
-    name: "Abhay Srivastava",
-    image: "worker-img.png",
-    expertise: "painting",
-    pincode: "225533",
-    experience: 3,
-    fee: 300,
-  },
-  {
-    id: 1125,
-    name: "Abhay Srivastava",
-    image: "worker-img.png",
-    expertise: "painting",
-    pincode: "225533",
-    experience: 3,
-    fee: 300,
-  },
-  {
-    id: 1126,
-    name: "Abhay Srivastava",
-    image: "worker-img.png",
-    expertise: "painting",
-    pincode: "225533",
-    experience: 3,
-    fee: 300,
-  },
-  {
-    id: 1127,
-    name: "Abhay Srivastava",
-    image: "worker-img.png",
-    expertise: "painting",
-    pincode: "225533",
-    experience: 3,
-    fee: 300,
-  },
-  {
-    id: 1128,
-    name: "Abhay Srivastava",
-    image: "worker-img.png",
-    expertise: "pest controlling",
-    pincode: "225533",
-    experience: 3,
-    fee: 300,
-  },
-  {
-    id: 1129,
-    name: "Abhay Srivastava",
-    image: "worker-img.png",
-    expertise: "painting",
-    pincode: "225533",
-    experience: 3,
-    fee: 300,
-  },
-  {
-    id: 1129,
-    name: "Abhay Srivastava",
-    image: "worker-img.png",
-    expertise: "painter",
-    pincode: "225533",
-    experience: 3,
-    fee: 300,
-  },
-];
+export interface Builder {
+  builder_id: string;
+  email: string;
+  fee: number;
+  firstname: string;
+  lastname: string;
+  phn_no: string;
+  pincode: string;
+  service_type: string;
+}
 
 function CategorySegment({
-  category,
+  serviceType,
   pincode,
-  selectedWorker,
-  saveWorker,
+  selectedBuilder,
+  saveBuilder,
 }: {
-  category: string;
+  serviceType: string;
   pincode: string;
-  selectedWorker: Iworker | null;
-  saveWorker: (worker: Iworker) => void;
+  selectedBuilder: Builder | null;
+  saveBuilder: (builder: Builder) => void;
 }) {
-  const workers = workersList.filter(
-    (worker) => worker.expertise == category && worker.pincode == pincode
+  console.log(serviceType, pincode);
+  const accessToken = useAppSelector((state) => state.auth.accessToken);
+
+  const { get, isLoading, errorMsg } = useHttp(
+    `https://builders-on-board-be-2.onrender.com/builder?service_type=${serviceType}&pincode=${pincode}`
   );
 
-  if (workers.length !== 0) {
-    const [workerSelected, setWorkerSelected] = useState<Iworker>(
-      selectedWorker ? selectedWorker : workers[0]
-    );
+  console.log(
+    `https://builders-on-board-be-2.onrender.com/builder?service_type=${serviceType}&pincode=${pincode}`
+  );
+  const [buildersList, setBuildersList] = useState<Builder[]>([]);
+  const [builderSelected, setBuilderSelected] = useState<Builder | null>();
 
-    !selectedWorker && saveWorker(workerSelected);
-
-    const selectWorkerHandler = (worker: Iworker) => {
-      setWorkerSelected(worker);
-      saveWorker(worker);
+  useEffect(() => {
+    const fetchBuilders = async () => {
+      const buildersList: Builder[] = await get(accessToken);
+      setBuildersList(buildersList);
+      setBuilderSelected(selectedBuilder ? selectedBuilder : buildersList[0]);
+      console.log(buildersList);
     };
+    fetchBuilders();
+  }, []);
 
+  if (buildersList && buildersList.length !== 0) {
+    !selectedBuilder && saveBuilder(builderSelected!);
+  }
+
+  const selectBuilderHandler = (builder: Builder) => {
+    setBuilderSelected(builder);
+    saveBuilder(builder);
+  };
+
+  if (isLoading || buildersList.length !== 0)
     return (
       <div className={classes["category-segment"]}>
         <h1>
           <span className={classes["highlighted-text"]}>
-            {category} Staff&nbsp;
+            {serviceType} Staff&nbsp;
           </span>
           in your locality
         </h1>
-        <div className={classes["workers-list"]}>
-          {workers.map((worker) => {
-            return (
-              <WorkerCard
-                key={worker.id}
-                worker={worker}
-                selectWorkerHandler={selectWorkerHandler}
-                isSelected={worker.id === workerSelected.id}
-              ></WorkerCard>
-            );
-          })}
-        </div>
+        {buildersList.length !== 0 && (
+          <div className={classes["workers-list"]}>
+            {buildersList.map((builder) => {
+              return (
+                <BuilderCard
+                  key={builder.builder_id}
+                  builder={builder}
+                  selectBuilderHandler={selectBuilderHandler}
+                  isSelected={
+                    builder.builder_id === builderSelected!.builder_id
+                  }
+                ></BuilderCard>
+              );
+            })}
+          </div>
+        )}
+        {isLoading && <Loader />}
       </div>
     );
-  } else {
+  else {
     return (
       <div className={classes["category-segment"]}>
         <h1>😟 unfortunately! no experts found </h1>
       </div>
     );
   }
+  // } else if (isLoading) {
+  //   return <Loader />;
+  // } else {
+  //   return (
+  //     <div className={classes["category-segment"]}>
+  //       <h1>😟 unfortunately! no experts found </h1>
+  //     </div>
+  //   );
+  // }
 }
 
 export default CategorySegment;

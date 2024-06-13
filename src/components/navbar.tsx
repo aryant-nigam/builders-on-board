@@ -1,13 +1,14 @@
 "use client";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import classes from "./navbar.module.css";
 
 import { useAppSelector } from "@/store/hooks";
 
 function Navbar() {
   const accessToken = useAppSelector((state) => state.auth.accessToken);
-  console.log(accessToken);
+
+  const [currentTab, setCurrentTab] = useState<number>(1);
   return (
     <nav className={classes.navbar}>
       <div className={classes["app-logo-container"]}>
@@ -20,24 +21,56 @@ function Navbar() {
         </Link>
       </div>
       <ul className={classes["nav-options"]}>
-        <Link href="/" className={classes["nav-option"]}>
+        <Link
+          href="/"
+          className={`${classes["nav-option"]} ${
+            currentTab === 1 && classes["active-nav-option"]
+          }`}
+          onClick={() => {
+            setCurrentTab(1);
+          }}
+        >
           Home
         </Link>
-        {
-          <Link href="/services" className={classes["nav-option"]}>
+        {accessToken && (
+          <Link
+            href="/services"
+            className={`${classes["nav-option"]} ${
+              currentTab === 2 && classes["active-nav-option"]
+            }`}
+            onClick={() => {
+              setCurrentTab(2);
+            }}
+          >
             Services
           </Link>
-        }
+        )}
         {
-          <Link href="/account" className={classes["nav-option"]}>
+          <Link
+            href="/account"
+            className={`${classes["nav-option"]} ${
+              currentTab === 3 && classes["active-nav-option"]
+            }`}
+            onClick={() => {
+              setCurrentTab(3);
+            }}
+          >
             Account
           </Link>
         }
-        {
-          <Link href="/profile" className={classes["nav-option"]}>
+        {accessToken && (
+          <Link
+            href="/profile"
+            className={`${classes["nav-option"]} ${
+              currentTab === 4 && classes["active-nav-option"]
+            }`}
+            onClick={() => {
+              setCurrentTab(4);
+            }}
+          >
             Profile
           </Link>
-        }
+        )}
       </ul>
     </nav>
   );

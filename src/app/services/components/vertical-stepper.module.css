@@ -3,6 +3,7 @@
   width: 300px;
   display: flex;
   flex-direction: column;
+  height: fit-content;
 }
 
 .step {
@@ -62,6 +63,7 @@
 }
 
 .footer {
+  margin-top: 10px;
   display: flex;
   flex-direction: row;
   /* margin-left: ; */
