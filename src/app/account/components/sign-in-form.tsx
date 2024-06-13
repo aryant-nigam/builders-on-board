@@ -95,7 +95,10 @@ function SigninForm({
 
         dispatch(
           setAuthenticatedUserDetails({
-            user: userAccessToken.sub,
+            user: {
+              id: userAccessToken.sub.id,
+              is_builder: userAccessToken.sub.is_builder,
+            },
             accessToken: tokens.access_token,
             refreshToken: tokens.refresh_token,
           })

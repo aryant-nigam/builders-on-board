@@ -57,9 +57,13 @@ function ServicesPage() {
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const customerId = useAppSelector((state) => state.auth.user?.id);
   const firstname =
-    useAppSelector((state) => state.auth.user?.firstname) || " ";
-  const lastname = useAppSelector((state) => state.auth.user?.lastname) || " ";
-  const email = useAppSelector((state) => state.auth.user?.email) || " ";
+    useAppSelector((state) => state.auth.userPersonalInformation?.firstname) ||
+    " ";
+  const lastname =
+    useAppSelector((state) => state.auth.userPersonalInformation?.lastname) ||
+    " ";
+  const email =
+    useAppSelector((state) => state.auth.userPersonalInformation?.email) || " ";
   const addressInitVal = useAppSelector(
     (state) => state.auth.userPersonalInformation?.address
   );

@@ -3,13 +3,13 @@ import { createSlice } from "@reduxjs/toolkit";
 
 interface Iuser {
   id: number;
-  firstname: string;
-  lastname: string;
-  email: string;
   is_builder: boolean;
 }
 
 interface IPersonaInformation {
+  firstname: string;
+  lastname: string;
+  email: string;
   address: string | null;
   landmark: string | null;
   phoneNumber: string | null;
@@ -53,7 +53,7 @@ const authSlice = createSlice({
       state.refreshToken = null;
     },
     setAuthenticatedUserDetails: (state, actions) => {
-      console.log(actions);
+      console.log(actions.payload);
       state.user = actions.payload.user;
       state.accessToken = actions.payload.accessToken;
       state.refreshToken = actions.payload.refreshToken;
@@ -61,7 +61,10 @@ const authSlice = createSlice({
 
     setAuthenticatedUserPersonalDetails: (state, actions) => {
       console.log(actions.payload);
-      state.userPersonalInformation = actions.payload;
+      state.userPersonalInformation = {
+        ...state.userPersonalInformation,
+        ...actions.payload,
+      };
     },
   },
 });

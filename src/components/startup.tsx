@@ -13,7 +13,6 @@ import Backdrop from "./backdrop";
 import Loader from "./loader";
 
 const StartUp = () => {
-  console.log("called");
   const [cookie, setCookie, removeCookie] = useCookies(["user"]);
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
@@ -104,10 +103,14 @@ const StartUp = () => {
       console.log("triggered");
       const fetchUserData = async () => {
         const personal_data = await get(jwt_token);
+        console.log("hi", personal_data);
         if (personal_data) {
           console.log(personal_data);
           dispatch(
             setAuthenticatedUserPersonalDetails({
+              firstname: personal_data.firstname,
+              lastname: personal_data.lastname,
+              email: personal_data.email,
               address: personal_data.address,
               landmark: personal_data.landmark,
               phoneNumber: personal_data.phn_no,

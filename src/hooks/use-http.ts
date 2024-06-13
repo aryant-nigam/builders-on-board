@@ -111,6 +111,7 @@ const useHttp = (url: string) => {
 
   const put = async (body: any, accessToken: string | null) => {
     try {
+      console.log(body);
       setIsLoading(true);
       const response = await fetch(url, {
         method: "PUT",
@@ -132,13 +133,14 @@ const useHttp = (url: string) => {
       setIsLoading(false);
       setResponseCode(200);
       setSuccessMsg(response_json.message);
-      return response_json;
+      return 200;
     } catch (error) {
       if (error instanceof HTTPError) {
         console.log(error);
         setIsLoading(false);
         setErrorMsg(error.message);
         setResponseCode(404);
+        return 404;
       }
     }
   };

@@ -4,22 +4,34 @@ import classes from "./page.module.css";
 import CollapsibleTile from "./components/collapsible-tiles";
 import ServiceList from "./components/service-list";
 import { useAppSelector } from "@/store/hooks";
+import PersonalDetailsForm from "./components/personal-details-form";
 
 const tiles = [
   { title: "Active Services", isActive: true },
   { title: "Completed Services", isActive: false },
 ];
+
 function ProfilePage() {
   function titleCase(str: string) {
     return str.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
   }
 
-  const firstName = useAppSelector((state) => state.auth.user?.firstname);
-  const lastName = useAppSelector((state) => state.auth.user?.lastname);
+  const firstName = useAppSelector(
+    (state) => state.auth.userPersonalInformation?.firstname
+  );
+  const lastName = useAppSelector(
+    (state) => state.auth.userPersonalInformation?.lastname
+  );
 
+  const c = useAppSelector((state) => state.auth.userPersonalInformation);
+
+  console.log(firstName, lastName, c);
   return (
     <div className={classes["profile-page"]}>
       <div className={classes["profile-page-left"]}>
+        <CollapsibleTile title="Personal Details">
+          <PersonalDetailsForm />
+        </CollapsibleTile>
         {tiles.map((tile, index) => (
           <CollapsibleTile key={index} title={tile.title}>
             <ServiceList isActive={tile.isActive} />
