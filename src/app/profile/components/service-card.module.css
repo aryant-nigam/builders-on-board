@@ -41,6 +41,7 @@
   font-weight: 400;
   font-size: larger;
 }
+
 .details-value {
   display: flex;
   justify-content: flex-start;
@@ -48,6 +49,12 @@
   width: 70%;
   margin: 10px 0px;
   color: #fff;
+}
+
+.hr {
+  height: 2px;
+  margin: 15px 0px;
+  border-top: 1px solid #fff;
 }
 
 .btn {
@@ -60,7 +67,20 @@
   border: 1px solid #4daa57;
   background-color: #4daa57;
   color: #fff;
-  margin-top: 15px;
+  margin-top: 30px;
   width: 100%;
   align-self: flex-end;
+}
+
+.contact {
+  display: flex;
+  width: 50%;
+  align-items: center;
+  justify-content: space-between;
+}
+.contact-icon {
+  height: 30px;
+  width: 30px;
+  object-fit: contain;
+  margin-right: 15px;
 }

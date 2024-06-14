@@ -6,10 +6,11 @@ import ServiceList from "./components/service-list";
 import { useAppSelector } from "@/store/hooks";
 import PersonalDetailsForm from "./components/personal-details-form";
 
-const tiles = [
-  { title: "Active Services", isActive: true },
-  { title: "Completed Services", isActive: false },
-];
+export enum ServiceListType {
+  ACTIVE,
+  INACTIVE,
+  CANCELLED,
+}
 
 function ProfilePage() {
   function titleCase(str: string) {
@@ -23,20 +24,63 @@ function ProfilePage() {
     (state) => state.auth.userPersonalInformation?.lastname
   );
 
-  const c = useAppSelector((state) => state.auth.userPersonalInformation);
+  const activeServicesList = useAppSelector(
+    (state) => state.services.activeServicesList
+  );
+  const completedServicesList = useAppSelector(
+    (state) => state.services.completedServicesList
+  );
+  const cancelledServicesList = useAppSelector(
+    (state) => state.services.cancelledServicesList
+  );
 
-  console.log(firstName, lastName, c);
+  console.log(activeServicesList, completedServicesList, cancelledServicesList);
+
   return (
     <div className={classes["profile-page"]}>
       <div className={classes["profile-page-left"]}>
         <CollapsibleTile title="Personal Details">
           <PersonalDetailsForm />
         </CollapsibleTile>
-        {tiles.map((tile, index) => (
-          <CollapsibleTile key={index} title={tile.title}>
-            <ServiceList isActive={tile.isActive} />
-          </CollapsibleTile>
-        ))}
+
+        <CollapsibleTile title="Active Services">
+          {activeServicesList.length !== 0 ? (
+            <ServiceList
+              type={ServiceListType.ACTIVE}
+              servicesList={activeServicesList}
+            ></ServiceList>
+          ) : (
+            <p className={classes["empty-list-message"]}>
+              You have no active services !
+            </p>
+          )}
+        </CollapsibleTile>
+
+        <CollapsibleTile title="Completed Services">
+          {completedServicesList.length !== 0 ? (
+            <ServiceList
+              type={ServiceListType.INACTIVE}
+              servicesList={completedServicesList}
+            ></ServiceList>
+          ) : (
+            <p className={classes["empty-list-message"]}>
+              You have no services which are completed !
+            </p>
+          )}
+        </CollapsibleTile>
+
+        <CollapsibleTile title="Cancelled Services">
+          {cancelledServicesList.length !== 0 ? (
+            <ServiceList
+              type={ServiceListType.CANCELLED}
+              servicesList={cancelledServicesList}
+            ></ServiceList>
+          ) : (
+            <p className={classes["empty-list-message"]}>
+              You have no services which were cancelled !
+            </p>
+          )}
+        </CollapsibleTile>
       </div>
       <div className={classes["profile-page-right"]}>
         <h1>
@@ -47,6 +91,7 @@ function ProfilePage() {
           </span>
           &nbsp; let's look at the services you availed
         </h1>
+
         <img src="builders.png" className={classes["img-banner"]}></img>
       </div>
     </div>

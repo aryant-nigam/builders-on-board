@@ -4,7 +4,9 @@ import { useCookies } from "react-cookie";
 import {
   setAuthenticatedUserDetails,
   setAuthenticatedUserPersonalDetails,
+  removeAuthenticatedUserDetails,
 } from "@/store/features/auth-slice";
+import { initialiseServices } from "@/store/features/services-slice";
 import { decodeToken, isExpired } from "react-jwt";
 import { DecodedToken } from "@/store/features/auth-slice";
 import useHttp from "@/hooks/use-http";
@@ -12,10 +14,20 @@ import { useEffect } from "react";
 import Backdrop from "./backdrop";
 import Loader from "./loader";
 
+const transformDate = (date: Date) => {
+  const day = date.toLocaleString("en-IN", { day: "2-digit" });
+  const month = date.toLocaleString("en-IN", { month: "long" });
+  const year = date.getFullYear();
+  return `${day} - ${month} - ${year}`;
+};
+
 const StartUp = () => {
   const [cookie, setCookie, removeCookie] = useCookies(["user"]);
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
+  const userPersonalInformation = useAppSelector(
+    (state) => state.auth.userPersonalInformation
+  );
   const id = user?.id;
   const jwt_token = useAppSelector((state) => state.auth.accessToken);
   console.log("user", user);
@@ -26,11 +38,21 @@ const StartUp = () => {
   } = useHttp("https://builders-on-board-be-2.onrender.com/refresh");
 
   const {
-    get,
-    isLoading: isLoadingOnGet,
-    errorMsg: errorMessageOnGet,
+    get: getCustomerDetails,
+    isLoading: isLoadingOnGetCustomerDetails,
+    errorMsg: errorMessageOnGetCustomerDetails,
   } = useHttp(`https://builders-on-board-be-2.onrender.com/customer?id=${id}`);
 
+  const {
+    get: getServices,
+    isLoading: isLoadingOnGetServices,
+    successMsg: successMsgOnGetServices,
+    errorMsg: errorMsgOnGetServices,
+  } = useHttp(
+    `https://builders-on-board-be-2.onrender.com/services?customer_id=${id}`
+  );
+
+  //simply fetch data in cookies or refresh token login
   useEffect(() => {
     const loginWithRefreshToken = async (refreshToken: string) => {
       console.log(refreshToken);
@@ -66,7 +88,9 @@ const StartUp = () => {
       }
     };
 
+    /*if auth state user is not ininitalised  */
     if (cookie.user && !user) {
+      console.log("screen is refreshed or token expired: triggering re-login");
       // first fetch the cookies from the browser
       console.log("fetching user from cookies", cookie);
       const userAccessToken: DecodedToken = decodeToken(
@@ -92,20 +116,23 @@ const StartUp = () => {
         console.log("expired");
         loginWithRefreshToken(cookie.user.refreshToken);
       } else {
-        //if neither access token and refresh token is valid then user should login again manually
+        //if neither access token and refresh token is valid then cookies should be removed and so does the user details
+        removeCookie("user");
+        dispatch(removeAuthenticatedUserDetails());
         console.log("expired login again");
       }
+    } else {
+      console.log("no cookies found or user exists in auth slice");
     }
   }, [user]);
 
   useEffect(() => {
+    // this effect will only be triggered when there exists a user in auth slice
     if (id && jwt_token) {
-      console.log("triggered");
       const fetchUserData = async () => {
-        const personal_data = await get(jwt_token);
-        console.log("hi", personal_data);
+        const personal_data = await getCustomerDetails(jwt_token);
+        console.log("personal details", personal_data);
         if (personal_data) {
-          console.log(personal_data);
           dispatch(
             setAuthenticatedUserPersonalDetails({
               firstname: personal_data.firstname,
@@ -119,13 +146,41 @@ const StartUp = () => {
           );
         }
       };
-      fetchUserData();
+      if (isExpired(jwt_token)) dispatch(removeAuthenticatedUserDetails());
+      else fetchUserData();
+    }
+
+    if (id && jwt_token) {
+      const fetchServiceList = async () => {
+        const services = await getServices(jwt_token);
+        console.log("services", services);
+        const extractedServiceList = services.map((service: any) => {
+          return {
+            serviceId: service.service_id,
+            serviceType: service.service_type,
+            bookingDate: transformDate(new Date(service.timestamp * 1000)),
+            description: service.description,
+            address: service.customer_address,
+            fee: service.builder_fee,
+            isActive: service.is_active,
+            isCancelled: service.is_cancelled,
+            builderName: `${service.builder_first_name} ${service.builder_last_name}`,
+            builderPhnNo: service.builder_phn_no,
+            builderEmail: service.builders_email,
+          };
+        });
+        dispatch(initialiseServices({ servicesList: extractedServiceList }));
+      };
+      if (isExpired(jwt_token)) dispatch(removeAuthenticatedUserDetails());
+      else {
+        fetchServiceList();
+      }
     }
   }, [user, id, jwt_token]);
 
   return (
     <>
-      {(isLoadingOnRefresh || isLoadingOnGet) && (
+      {(isLoadingOnRefresh || isLoadingOnGetCustomerDetails) && (
         <Backdrop>
           <Loader />
         </Backdrop>

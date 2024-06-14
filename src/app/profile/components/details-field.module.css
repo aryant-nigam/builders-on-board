@@ -13,7 +13,7 @@
 
 .label {
   width: 100px;
-  margin-top: 15px;
+  margin-top: 25px;
   font-size: large;
   font-weight: 500;
   color: #4daa57;
@@ -27,7 +27,7 @@
 }
 
 .edit-btn {
-  margin-top: 15px;
+  margin-top: 20px;
   width: 30px;
   height: 30px;
   border-radius: 50%;

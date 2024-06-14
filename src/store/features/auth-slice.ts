@@ -53,13 +53,17 @@ const authSlice = createSlice({
       state.refreshToken = null;
     },
     setAuthenticatedUserDetails: (state, actions) => {
-      console.log(actions.payload);
+      console.log("request recieved to set user details", actions.payload);
       state.user = actions.payload.user;
       state.accessToken = actions.payload.accessToken;
       state.refreshToken = actions.payload.refreshToken;
     },
 
     setAuthenticatedUserPersonalDetails: (state, actions) => {
+      console.log(
+        "request recieved to set users personal details",
+        actions.payload
+      );
       console.log(actions.payload);
       state.userPersonalInformation = {
         ...state.userPersonalInformation,

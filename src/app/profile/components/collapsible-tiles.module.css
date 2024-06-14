@@ -50,7 +50,7 @@
   text-transform: capitalize;
 }
 
-.collapsible-tile-body {
+.collapsible-tile-body-collapsed {
   display: none;
   width: 100%;
   margin: 10px 0px;
@@ -60,18 +60,34 @@
   transition: all 0.5s cubic-bezier(0, 1, 0, 1);
 }
 
-.expand {
+.collapsible-tile-body-expanded {
   display: flex;
   flex-direction: column;
   width: 100%;
   margin: 10px 0px;
   background-color: #fff;
-  height: 400px;
+  max-height: 400px;
+  min-height: fit-content;
   overflow-y: scroll;
   max-height: 9999;
   transition: all 0.5s cubic-bezier(1, 0, 1, 0);
+  box-sizing: border-box;
+
   /*overflow: hidden; */
   /* animation: expand-animation 2s ease-in-out 5s 0 forwards; */
+}
+
+.collapsible-tile-body-expanded::-webkit-scrollbar {
+  width: 10px;
+}
+
+.collapsible-tile-body-expanded::-webkit-scrollbar-track {
+  background: #fff;
+}
+
+.collapsible-tile-body-expanded::-webkit-scrollbar-thumb {
+  background-color: #2c554f90;
+  border-radius: 10px;
 }
 
 @keyframes expand-animation {

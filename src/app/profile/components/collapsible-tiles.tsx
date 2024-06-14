@@ -27,7 +27,9 @@ function CollapsibleTile({ title, children }: ICollapsableTile) {
       </div>
       <div
         className={`${
-          isCollapsed ? classes["collapsible-tile-body"] : classes["expand"]
+          isCollapsed
+            ? classes["collapsible-tile-body-collapsed"]
+            : classes["collapsible-tile-body-expanded"]
         }
         `}
       >
