@@ -103,6 +103,8 @@ function SigninForm({
             refreshToken: tokens.refresh_token,
           })
         );
+
+        router.replace("/");
       }
     };
 
@@ -110,7 +112,6 @@ function SigninForm({
 
     // resetEmail();
     // resetPassword();
-    // router.replace("/");
   };
 
   useEffect(() => {
