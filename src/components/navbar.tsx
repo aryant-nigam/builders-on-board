@@ -68,16 +68,6 @@ function Navbar() {
               Account
             </Link>
           )}
-          {
-            <Link
-              href="/session-expired"
-              className={`${classes["nav-option"]} ${
-                pathName === "/session-expired" && classes["active-nav-option"]
-              }`}
-            >
-              Session
-            </Link>
-          }
         </ul>
       </nav>
     );

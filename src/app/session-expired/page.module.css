@@ -1,0 +1,108 @@
+.session-page {
+  height: 100vh;
+  max-height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  /* padding: 1em 4em 1em 4em; */
+  margin-bottom: 2em;
+  background-color: #fff;
+  margin: 0px;
+  overflow-y: hidden;
+}
+.session-page h1 {
+  color: #fff;
+  font-size: 7em;
+  /* text-shadow: 0px 0px 4px #1b3531; */
+  -webkit-text-stroke: 2px #1b3531;
+  text-transform: capitalize;
+}
+
+.img-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 500px;
+  height: 500px;
+  opacity: 0;
+  animation: popIn 0.5s ease-in-out 2.4s 1 forwards;
+}
+
+.builder-session-expired-img {
+  width: 400px;
+  height: 400px;
+  object-fit: cover;
+}
+
+.reload {
+  margin-top: 1em;
+  font-size: 1.2em;
+  border: 3px solid #2c554f;
+  color: #2c554f;
+  padding: 15px 15px;
+  outline: none;
+  background-color: #fff;
+  font-weight: 600;
+  width: 250px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.page-title {
+  position: absolute;
+  display: flex;
+}
+
+.broken-char:first-child {
+  animation: fall 2s forwards 0.7s;
+}
+.broken-char:nth-child(even) {
+  animation: fall 2s forwards 1s;
+}
+.broken-char:nth-child(3n) {
+  animation: fall 2s forwards 1.15s;
+}
+.broken-char:nth-child(odd) {
+  animation: fall 2s forwards 1.3s;
+}
+.broken-char:nth-child(4n) {
+  animation: fall 2s forwards 1.4s;
+}
+.broken-char:nth-child(5n) {
+  animation: fall 2s forwards 1.7s;
+}
+.broken-char:nth-child(6n) {
+  animation: fall 2s forwards 1.9s;
+}
+.broken-char:nth-child(8n) {
+  animation: fall 2s forwards 2.1s;
+}
+.broken-char:nth-child(9n) {
+  animation: fall 2s forwards 2.2s;
+}
+
+@keyframes fall {
+  from {
+    transform: translateY(0%);
+  }
+  to {
+    transform: translateY(100vh);
+  }
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
