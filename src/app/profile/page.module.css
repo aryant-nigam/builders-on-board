@@ -1,11 +1,4 @@
 .profile-page {
-  /* margin: 0px;
-  width: 100%;
-  height: fit-content;
-  display: flex;
-
-  box-sizing: border-box; */
-
   height: fit-content;
   width: 100vw;
   display: flex;
@@ -14,7 +7,6 @@
   justify-content: space-between;
   box-sizing: border-box;
   /* padding: 1em 4em 1em 4em; */
-  margin-bottom: 2em;
   background-color: #fff;
   margin: 0px;
 }
@@ -34,17 +26,21 @@
 .profile-page-right {
   box-sizing: border-box;
   width: 50%;
-  height: 100%;
+  height: fit-content;
   background-color: #fff;
   display: flex;
   flex-direction: column;
-  padding: 4em 2em;
+  padding: 0em 2em;
   align-items: center;
   overflow: hidden;
+  position: sticky;
+  top: 20%;
+  bottom: 0;
+  justify-content: center;
 }
 
 .img-banner {
-  margin-top: 4em;
+  margin-top: 2em;
   width: 80%;
   height: fit-content;
   object-fit: contain;
@@ -52,8 +48,9 @@
 
 .profile-page-right > h1 {
   color: #2c554f;
-  font-size: 3em;
+  font-size: 2em;
   margin: 0px;
+
   text-align: center;
 }
 

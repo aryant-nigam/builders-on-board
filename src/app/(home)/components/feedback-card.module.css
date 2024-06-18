@@ -13,20 +13,29 @@
 
 .consumer-name {
   color: #4daa57;
-  margin: 5% 0px;
+  margin: 10px 0px;
+  font-size: larger;
+  text-transform: capitalize;
+}
+
+.feedback-card > h6 {
+  margin: 10px 0px;
+  color: #fff;
   font-size: large;
   text-transform: capitalize;
 }
 
 .service {
-  margin: 5px 0px;
-  color: #fff;
-  font-weight: 400;
+  margin-bottom: 10px;
+  color: #4daa57;
+  font-weight: 600;
   font-size: medium;
-  text-transform: capitalize;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .feedback {
+  margin-top: 5px;
   color: #fff;
 }
 
@@ -34,6 +43,7 @@
   display: flex;
   width: fit-content;
   align-self: flex-end;
+  margin-top: 10px;
   /* align-items: flex-end; */
 }
 
@@ -41,6 +51,7 @@
   height: 30px;
   width: 30px;
   object-fit: cover;
+  margin: 0px 2px;
 }
 
 .rating {

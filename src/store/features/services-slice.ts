@@ -18,10 +18,6 @@ const servicesSlice = createSlice({
   initialState: initialState,
   reducers: {
     initialiseServices: (state, action) => {
-      console.log(
-        "request recieved to initialise services",
-        action.payload.servicesList
-      );
       action.payload.servicesList.forEach((service: any) => {
         if (service.isCancelled) state.cancelledServicesList.push(service);
         else {
@@ -30,20 +26,36 @@ const servicesSlice = createSlice({
         }
       });
     },
+
     completeService: (state, action) => {
       state.completedServicesList.push(action.payload.service);
       state.activeServicesList = state.activeServicesList.filter(
         (service) => service.serviceId != action.payload.service.serviceId
       );
     },
+
     cancelService: (state, action) => {
       state.cancelledServicesList.push(action.payload.service);
       state.activeServicesList = state.activeServicesList.filter(
         (service) => service.serviceId != action.payload.service.serviceId
       );
     },
+
+    updateCompletedServices: (state, action) => {
+      console.log("updation req recieved");
+      console.log(action.payload.service);
+      const index = state.completedServicesList.findIndex(
+        (completedService) =>
+          completedService.serviceId == action.payload.service.serviceId
+      );
+      state.completedServicesList[index] = action.payload.service;
+    },
   },
 });
-export const { initialiseServices, completeService, cancelService } =
-  servicesSlice.actions;
+export const {
+  initialiseServices,
+  completeService,
+  cancelService,
+  updateCompletedServices,
+} = servicesSlice.actions;
 export default servicesSlice.reducer;

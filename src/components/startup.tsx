@@ -154,22 +154,30 @@ const StartUp = () => {
       const fetchServiceList = async () => {
         const services = await getServices(jwt_token);
         console.log("services", services);
-        const extractedServiceList = services.map((service: any) => {
-          return {
-            serviceId: service.service_id,
-            serviceType: service.service_type,
-            bookingDate: transformDate(new Date(service.timestamp * 1000)),
-            description: service.description,
-            address: service.customer_address,
-            fee: service.builder_fee,
-            isActive: service.is_active,
-            isCancelled: service.is_cancelled,
-            builderName: `${service.builder_first_name} ${service.builder_last_name}`,
-            builderPhnNo: service.builder_phn_no,
-            builderEmail: service.builders_email,
-          };
-        });
-        dispatch(initialiseServices({ servicesList: extractedServiceList }));
+        if (services.length > 0) {
+          const extractedServiceList = services.map((service: any) => {
+            return {
+              serviceId: service.service_id,
+              serviceType: service.service_type,
+              bookingDate: transformDate(new Date(service.timestamp * 1000)),
+              description: service.description,
+              address: service.customer_address,
+              fee: service.builder_fee,
+              isActive: service.is_active,
+              isCancelled: service.is_cancelled,
+              builderName: `${service.builder_first_name} ${service.builder_last_name}`,
+              builderPhnNo: service.builder_phn_no,
+              builderEmail: service.builders_email,
+              customerFeedback: service.customer_feedback,
+              customerStarRating: service.customer_star_rating,
+            };
+          });
+          dispatch(
+            initialiseServices({
+              servicesList: services.length > 0 ? extractedServiceList : [],
+            })
+          );
+        }
       };
       if (isExpired(jwt_token)) dispatch(removeAuthenticatedUserDetails());
       else {

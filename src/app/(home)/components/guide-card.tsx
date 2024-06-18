@@ -9,12 +9,10 @@ interface IGuideCard {
 
 function GuideCard({ imagePath, title, description }: IGuideCard) {
   return (
-    <div className={classes["home-segment-4-card"]}>
-      <img src={imagePath} className={classes["home-segment-4-card-img"]}></img>
-      <h5 className={classes["home-segment-4-card-title"]}>{title}</h5>
-      <p className={classes["home-segment-4-card-description"]}>
-        {description}
-      </p>
+    <div className={classes["guide-card"]}>
+      <img src={imagePath} className={classes["guide-card-img"]}></img>
+      <h5 className={classes["guide-card-title"]}>{title}</h5>
+      <p className={classes["guide-card-description"]}>{description}</p>
     </div>
   );
 }

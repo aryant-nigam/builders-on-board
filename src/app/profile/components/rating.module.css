@@ -1,0 +1,22 @@
+.rating {
+  display: flex;
+  cursor: pointer;
+  width: fit-content;
+  align-items: center;
+  /* border: 1px solid black; */
+}
+.star {
+  width: 35px;
+  height: 35px;
+  object-fit: cover;
+  margin: 0px 3px;
+  cursor: pointer;
+}
+.rating-msg {
+  font-size: 12px;
+  color: #fff;
+  background-color: #4daa57;
+  padding: 3px 5px;
+  border-radius: 5px;
+  margin-left: 15px;
+}

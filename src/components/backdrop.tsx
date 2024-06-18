@@ -21,7 +21,9 @@ const Backdrop = ({ children }: { children: React.ReactNode }) => {
 
   return backdropContainer
     ? createPortal(
-        <div className={classes.backdrop}>{children}</div>,
+        <div className={classes.backdrop} style={{ top: window.scrollY }}>
+          {children}
+        </div>,
         backdropContainer! as Element
       )
     : null;

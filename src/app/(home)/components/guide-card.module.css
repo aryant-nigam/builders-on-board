@@ -1,4 +1,4 @@
-.home-segment-4-card {
+.guide-card {
   height: 100%;
   width: 25%;
   border-radius: 1em;
@@ -10,20 +10,20 @@
   justify-content: center;
 }
 
-.home-segment-4-card-img {
+.guide-card-img {
   height: 40px;
   width: 40px;
   object-fit: cover;
   filter: invert(100%);
 }
 
-.home-segment-4-card-title {
+.guide-card-title {
   color: #4daa57;
   margin: 10px 0px;
   font-size: large;
 }
 
-.home-segment-4-card-description {
+.guide-card-description {
   margin: 10px 0px;
   color: #fff;
 }

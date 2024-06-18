@@ -1,21 +1,34 @@
 import React from "react";
 import classes from "./feedback-card.module.css";
 interface IFeedback {
-  consumerName: string;
-  service: string;
+  customerName: string;
+  serviceType: string;
   feedback: string;
   rating: number;
 }
 
-function FeedbackCard({ consumerName, service, feedback, rating }: IFeedback) {
+function FeedbackCard({
+  customerName,
+  serviceType,
+  feedback,
+  rating,
+}: IFeedback) {
   return (
     <div className={classes["feedback-card"]}>
-      <h4 className={classes["consumer-name"]}>{consumerName}</h4>
-      <h6 className={classes.service}>{service}</h6>
+      <h4 className={classes["consumer-name"]}>{customerName}</h4>
+      <h6>
+        service availed:&nbsp;&nbsp;
+        <span className={classes.service}>{serviceType}</span>
+      </h6>
       <p className={classes.feedback}>{feedback}</p>
       <div className={classes["rating-holder"]}>
-        <img src="star.png" className={classes["star-img"]}></img>
-        <h6 className={classes.rating}>{rating}</h6>
+        {Array.from({ length: rating }, (_, index) => (
+          <img
+            key={index}
+            src="active-star.png"
+            className={classes["star-img"]}
+          ></img>
+        ))}
       </div>
     </div>
   );

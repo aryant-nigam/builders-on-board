@@ -24,7 +24,6 @@ function ThirdHomeSegment() {
           <p>Choose and connect with the best person for the job.</p>
         </div>
         <div className={classes["checked-list-item"]}>
-          {" "}
           <img
             src="check-mark.png"
             className={classes["checked-list-icon"]}

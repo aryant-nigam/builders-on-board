@@ -9,16 +9,19 @@ import { removeAuthenticatedUserDetails } from "@/store/features/auth-slice";
 import Loader from "@/components/loader";
 
 export interface IServiceCard {
-  serviceId: string;
+  serviceId: number;
   serviceType: string;
   bookingDate: string;
   description: string;
   address: string;
   fee: number;
   isActive: boolean;
+  isCancelled: boolean;
   builderName: string;
   builderPhnNo: string;
   builderEmail: string;
+  customerFeedback: string;
+  customerStarRating: number;
 }
 
 // const serviceList: IServiceCard[] = [
@@ -121,6 +124,7 @@ function ServiceList({
   type: ServiceListType;
   servicesList: IServiceCard[];
 }) {
+  console.log(servicesList);
   return (
     <div className={classes["service-list"]}>
       {servicesList.length !== 0 &&

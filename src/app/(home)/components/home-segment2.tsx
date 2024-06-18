@@ -18,12 +18,12 @@ function SecondHomeSegment() {
             />
           </div>
           <h3>Carpentry</h3>
-          <h5>Avg Project cost : $55 - $60</h5>
+          <h5>Avg Project cost : ₹ 550 - ₹ 800</h5>
         </div>
 
         <div className={classes["image-holder"]}>
           <h3>Electrical Help</h3>
-          <h5>Avg Project cost : $37 - $42</h5>
+          <h5>Avg Project cost : ₹ 150 - ₹ 400</h5>
           <div className={classes["frame-even"]}>
             <img
               src="electrician.webp"
@@ -42,12 +42,12 @@ function SecondHomeSegment() {
             />
           </div>
           <h3>Painting</h3>
-          <h5>Avg Project cost : $85 - $97</h5>
+          <h5>Avg Project cost : ₹ 500- ₹ 900</h5>
         </div>
 
         <div className={classes["image-holder"]}>
           <h3>Pest Control</h3>
-          <h5>Avg Project cost : $62 - $67</h5>
+          <h5>Avg Project cost : ₹ 400 - ₹ 650</h5>
           <div className={classes["frame-even"]}>
             <img
               src="pest.jpg"

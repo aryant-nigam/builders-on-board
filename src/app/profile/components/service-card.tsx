@@ -1,17 +1,22 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import classes from "./service-card.module.css";
 import { IServiceCard } from "./service-list";
 import { toTitleCase } from "@/utils";
 import { ServiceListType } from "../page";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import { cancelService } from "@/store/features/services-slice";
+import {
+  cancelService,
+  updateCompletedServices,
+} from "@/store/features/services-slice";
 import useHttp from "@/hooks/use-http";
 import { isExpired } from "react-jwt";
 import { removeAuthenticatedUserDetails } from "@/store/features/auth-slice";
 import Backdrop from "@/components/backdrop";
 import Loader from "@/components/loader";
 import Snackbar from "@/components/snackbar";
+import FeedbackForm from "./feedback-form";
+import { useRouter } from "next/navigation";
 
 function ServiceCard({
   service,
@@ -23,29 +28,72 @@ function ServiceCard({
   const dispatch = useAppDispatch();
   const customerId = useAppSelector((state) => state.auth.user?.id);
   const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const refreshToken = useAppSelector((state) => state.auth.refreshToken);
+  const router = useRouter();
   const { put, isLoading, successMsg, errorMsg } = useHttp(
     `https://builders-on-board-be-2.onrender.com/services?customer_id=${customerId}&service_id=${service.serviceId}`
   );
 
-  const provideFeedbackHandler = () => {
-    console.log("provide feedback");
-  };
+  const [isFeedbackFormOpen, setIsFeedbackFormOpen] = useState<Boolean>(false);
 
-  const updateServiceStatus = async () => {
+  const cancelServiceRequest = async () => {
     const response = await put({ is_cancelled: true }, accessToken);
     if (response == 200) {
       setTimeout(() => {
-        dispatch(cancelService({ service }));
+        dispatch(
+          cancelService({
+            service: { ...service, isActive: false, isCancelled: true },
+          })
+        );
       }, 3000);
     }
   };
 
   const cancelServiceHandler = () => {
     if (isExpired(accessToken!)) {
-      removeAuthenticatedUserDetails();
-      console.log(successMsg);
+      if (refreshToken && !isExpired(refreshToken)) {
+        router.replace("/session-expired");
+      } else {
+        dispatch(removeAuthenticatedUserDetails());
+      }
     } else {
-      updateServiceStatus();
+      cancelServiceRequest();
+    }
+  };
+
+  const sendFeedbackHandler = async (feedbackBody: any) => {
+    if (isExpired(accessToken!)) {
+      if (refreshToken && !isExpired(refreshToken)) {
+        router.replace("/session-expired");
+      } else {
+        dispatch(removeAuthenticatedUserDetails());
+      }
+    } else {
+      setIsFeedbackFormOpen(false);
+      const response = await put(feedbackBody, accessToken);
+      console.log("done Be");
+      dispatch(
+        updateCompletedServices({
+          service: {
+            ...service,
+            customerFeedback: feedbackBody["customer_feedback"],
+            customerStarRating: feedbackBody["customer_star_rating"],
+          },
+        })
+      );
+      console.log("done store");
+    }
+  };
+
+  const openFeedbackFormHandler = () => {
+    if (isExpired(accessToken!)) {
+      if (refreshToken && !isExpired(refreshToken)) {
+        router.replace("/session-expired");
+      } else {
+        dispatch(removeAuthenticatedUserDetails());
+      }
+    } else {
+      setIsFeedbackFormOpen(true);
     }
   };
 
@@ -53,7 +101,7 @@ function ServiceCard({
     if (type === ServiceListType.ACTIVE) {
       cancelServiceHandler();
     } else if (type === ServiceListType.INACTIVE) {
-      provideFeedbackHandler();
+      openFeedbackFormHandler();
     }
   };
 
@@ -64,8 +112,20 @@ function ServiceCard({
           <Loader />
         </Backdrop>
       )}
+      {isFeedbackFormOpen && (
+        <Backdrop>
+          <FeedbackForm
+            serviceId={service.serviceId}
+            sendFeedbackHandler={sendFeedbackHandler}
+            closeFeedbackFormHandler={() => {
+              setIsFeedbackFormOpen(false);
+            }}
+          />
+        </Backdrop>
+      )}
       {successMsg && <Snackbar message={successMsg} />}
       {errorMsg && <Snackbar message={errorMsg} />}
+      <p>{service.serviceId}</p>
       <div className={classes.details}>
         <h4 className={classes["details-label"]}>Service:</h4>
         <p className={classes["details-value"]}>
@@ -105,10 +165,14 @@ function ServiceCard({
           <p className={classes["details-value"]}>{service.builderEmail}</p>
         </div>
       </div>
-      {(type === ServiceListType.ACTIVE ||
-        type === ServiceListType.INACTIVE) && (
+      {type === ServiceListType.ACTIVE && (
         <button className={classes["btn"]} onClick={clickHandler}>
-          {type === ServiceListType.ACTIVE ? "cancel" : "write feedback"}
+          cancel
+        </button>
+      )}
+      {type === ServiceListType.INACTIVE && !service.customerFeedback && (
+        <button className={classes["btn"]} onClick={clickHandler}>
+          write feedback
         </button>
       )}
     </div>

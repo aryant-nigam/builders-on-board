@@ -34,7 +34,7 @@ function ProfilePage() {
     (state) => state.services.cancelledServicesList
   );
 
-  console.log(activeServicesList, completedServicesList, cancelledServicesList);
+  // console.log(activeServicesList, completedServicesList, cancelledServicesList);
 
   return (
     <div className={classes["profile-page"]}>
