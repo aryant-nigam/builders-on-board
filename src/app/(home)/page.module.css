@@ -1,6 +1,6 @@
 .home {
   box-sizing: border-box;
-  width: 100%;
+  width: 100vw;
   height: fit-content;
   margin: 0px;
   padding: 0px;

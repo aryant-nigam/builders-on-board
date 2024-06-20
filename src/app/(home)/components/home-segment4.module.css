@@ -34,7 +34,7 @@
 }
 
 .home-segment-4-guide-cards-container {
-  width: fit-content;
+  width: 100%;
   height: 200px;
   display: flex;
   flex-direction: row;
@@ -47,19 +47,16 @@
 .home-segment-4-bottom {
   width: 100%;
   height: 60%;
-  background-color: #fff;
-}
-
-.home-segment-4-bottom {
-  width: 100%;
   height: fit-content;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding: 4em 4em 4em 4em;
+  padding: 4em 0em;
   background-color: #fff;
 }
 
 .home-segment-4-bottom > h1 {
   color: #000;
+  margin-left: 1.5em;
+  margin-bottom: 0.5em;
 }

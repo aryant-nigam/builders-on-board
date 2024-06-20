@@ -1,5 +1,5 @@
-.feedback-list {
-  width: 100%;
+.feedback-carousel {
+  width: 95%;
   height: 250px;
   display: flex;
   flex-direction: row;
@@ -7,4 +7,70 @@
   align-items: center;
   margin: 2em 0em;
   overflow-x: hidden;
+  margin: 0px 2em;
+  /* background-color: aqua; */
+}
+
+#feedback-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  align-items: center;
+}
+
+.next-btn,
+.prev-btn {
+  width: 30px;
+  min-width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0px;
+  background-color: #4daa57;
+}
+
+.next-btn {
+  margin-left: 10px;
+}
+
+.prev-btn {
+  margin-right: 10px;
+}
+
+.hidden {
+  visibility: hidden;
+}
+.next-icon,
+.prev-icon {
+  height: 17px;
+  width: 17px;
+  object-fit: contain;
+  filter: invert(100%);
+}
+.next-icon {
+  margin-left: 3px;
+  transform: rotate(270deg);
+}
+.prev-icon {
+  margin-right: 3px;
+  transform: rotate(90deg);
+}
+
+.loader-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-msg {
+  font-size: 1.5em;
+  font-weight: 600;
 }

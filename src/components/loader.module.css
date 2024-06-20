@@ -3,6 +3,7 @@
   height: 25px;
   border-radius: 50%;
   align-self: center;
+  justify-self: center;
   margin: 50px;
   border: 7px solid rgb(217, 215, 215);
   border-top: 7px solid #2c554f;
