@@ -15,6 +15,8 @@ import Loader from "@/components/loader";
 import Snackbar from "@/components/snackbar";
 import { useAppDispatch } from "@/store/hooks";
 import { removeAuthenticatedUserDetails } from "@/store/features/auth-slice";
+import { isExpired } from "react-jwt";
+import { setIsServiceUpdated } from "@/store/features/services-slice";
 
 const categories: string[] = [
   "electronics",
@@ -55,6 +57,7 @@ const steps = [
 
 function ServicesPage() {
   const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const refreshToken = useAppSelector((state) => state.auth.refreshToken);
   const customerId = useAppSelector((state) => state.auth.user?.id);
   const firstname =
     useAppSelector((state) => state.auth.userPersonalInformation?.firstname) ||
@@ -247,7 +250,7 @@ function ServicesPage() {
       builder_id: builderSelected?.builder_id,
       customer_id: customerId,
     };
-    const response = post(body, accessToken);
+    const response = await post(body, accessToken);
   };
 
   const updateCustomerDetails = async () => {
@@ -267,21 +270,23 @@ function ServicesPage() {
     if (Object.keys(body).length !== 0) {
       await put(body, accessToken);
       if (responseCode === 200) {
-        createService();
+        await createService();
+        dispatch(setIsServiceUpdated());
       }
     } else {
       await createService();
+      dispatch(setIsServiceUpdated());
     }
   };
 
-  useEffect(() => {
-    if (
-      errorMsgOnCustomerUpdate === "Token has expired" ||
-      errorMsgOnCreateService === "Token has expired"
-    ) {
-      dispatch(removeAuthenticatedUserDetails());
-    }
-  }, [errorMsgOnCustomerUpdate, errorMsgOnCreateService]);
+  // useEffect(() => {
+  //   if (
+  //     errorMsgOnCustomerUpdate === "Token has expired" ||
+  //     errorMsgOnCreateService === "Token has expired"
+  //   ) {
+  //     dispatch(removeAuthenticatedUserDetails());
+  //   }
+  // }, [errorMsgOnCustomerUpdate, errorMsgOnCreateService]);
 
   useEffect(() => {
     if (successMsgOnCreateService) {
@@ -295,7 +300,13 @@ function ServicesPage() {
     //send the details to database after creating an object from customer and worker details
     // console.log(builderSelected);
     // console.log(serviceDetails);
-    updateCustomerDetails();
+    if (!isExpired(accessToken!)) {
+      updateCustomerDetails();
+    } else if (refreshToken && !isExpired(refreshToken)) {
+      router.replace("/session-expired");
+    } else {
+      dispatch(removeAuthenticatedUserDetails());
+    }
   };
 
   return (

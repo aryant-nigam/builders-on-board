@@ -2,12 +2,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface IServiceSlice {
+  isUpdated: boolean;
   activeServicesList: any[];
   completedServicesList: any[];
   cancelledServicesList: any[];
 }
 
 const initialState: IServiceSlice = {
+  isUpdated: true,
   activeServicesList: [],
   completedServicesList: [],
   cancelledServicesList: [],
@@ -18,6 +20,9 @@ const servicesSlice = createSlice({
   initialState: initialState,
   reducers: {
     initialiseServices: (state, action) => {
+      state.activeServicesList = [];
+      state.completedServicesList = [];
+      state.cancelledServicesList = [];
       action.payload.servicesList.forEach((service: any) => {
         if (service.isCancelled) state.cancelledServicesList.push(service);
         else {
@@ -32,12 +37,19 @@ const servicesSlice = createSlice({
       state.activeServicesList = state.activeServicesList.filter(
         (service) => service.serviceId != action.payload.service.serviceId
       );
+
+      state.completedServicesList.sort(
+        (serviceA, serviceB) => serviceB.timestamp - serviceA.timestamp
+      );
     },
 
     cancelService: (state, action) => {
       state.cancelledServicesList.push(action.payload.service);
       state.activeServicesList = state.activeServicesList.filter(
         (service) => service.serviceId != action.payload.service.serviceId
+      );
+      state.cancelledServicesList.sort(
+        (serviceA, serviceB) => serviceB.timestamp - serviceA.timestamp
       );
     },
 
@@ -50,6 +62,15 @@ const servicesSlice = createSlice({
       );
       state.completedServicesList[index] = action.payload.service;
     },
+
+    setIsServiceUpdated: (state) => {
+      console.log("setting is service updated");
+      state.isUpdated = true;
+    },
+
+    resetIsServiceUpdated: (state) => {
+      state.isUpdated = false;
+    },
   },
 });
 export const {
@@ -57,5 +78,7 @@ export const {
   completeService,
   cancelService,
   updateCompletedServices,
+  setIsServiceUpdated,
+  resetIsServiceUpdated,
 } = servicesSlice.actions;
 export default servicesSlice.reducer;

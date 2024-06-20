@@ -6,13 +6,17 @@ import {
   setAuthenticatedUserPersonalDetails,
   removeAuthenticatedUserDetails,
 } from "@/store/features/auth-slice";
-import { initialiseServices } from "@/store/features/services-slice";
+import {
+  initialiseServices,
+  resetIsServiceUpdated,
+} from "@/store/features/services-slice";
 import { decodeToken, isExpired } from "react-jwt";
 import { DecodedToken } from "@/store/features/auth-slice";
 import useHttp from "@/hooks/use-http";
 import { useEffect } from "react";
 import Backdrop from "./backdrop";
 import Loader from "./loader";
+import { useRouter } from "next/navigation";
 
 const transformDate = (date: Date) => {
   const day = date.toLocaleString("en-IN", { day: "2-digit" });
@@ -25,12 +29,12 @@ const StartUp = () => {
   const [cookie, setCookie, removeCookie] = useCookies(["user"]);
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
-  const userPersonalInformation = useAppSelector(
-    (state) => state.auth.userPersonalInformation
-  );
   const id = user?.id;
   const jwt_token = useAppSelector((state) => state.auth.accessToken);
-  console.log("user", user);
+  const refreshToken = useAppSelector((state) => state.auth.refreshToken);
+  const isServiceUpdated = useAppSelector((state) => state.services.isUpdated);
+  const router = useRouter();
+
   const {
     refresh,
     isLoading: isLoadingOnRefresh,
@@ -44,13 +48,28 @@ const StartUp = () => {
   } = useHttp(`https://builders-on-board-be-2.onrender.com/customer?id=${id}`);
 
   const {
-    get: getServices,
-    isLoading: isLoadingOnGetServices,
-    successMsg: successMsgOnGetServices,
-    errorMsg: errorMsgOnGetServices,
+    get: GetCustomerServices,
+    isLoading: isLoadingOnGetCustomerServices,
+    successMsg: successMsgOnGetCustomerServices,
+    errorMsg: errorMsgOnGetCustomerServices,
   } = useHttp(
     `https://builders-on-board-be-2.onrender.com/services?customer_id=${id}`
   );
+
+  const {
+    get: getBuilderDetails,
+    isLoading: isLoadingOnGetBuilderDetails,
+    errorMsg: errorMessageOnGetBuilderDetails,
+  } = useHttp(`https://builders-on-board-be-2.onrender.com/builder?id=${id}`);
+
+  // const {
+  //   get: getServices,
+  //   isLoading: isLoadingOnGetServices,
+  //   successMsg: successMsgOnGetServices,
+  //   errorMsg: errorMsgOnGetServices,
+  // } = useHttp(
+  //   `https://builders-on-board-be-2.onrender.com/services?customer_id=${id}`
+  // );
 
   //simply fetch data in cookies or refresh token login
   useEffect(() => {
@@ -146,13 +165,24 @@ const StartUp = () => {
           );
         }
       };
-      if (isExpired(jwt_token)) dispatch(removeAuthenticatedUserDetails());
-      else fetchUserData();
+      if (!isExpired(jwt_token)) {
+        fetchUserData();
+      } else if (
+        isExpired(jwt_token) &&
+        refreshToken &&
+        !isExpired(refreshToken)
+      ) {
+        router.replace("/session-expired");
+      } else {
+        dispatch(removeAuthenticatedUserDetails());
+      }
     }
+  }, [user, id, jwt_token]);
 
-    if (id && jwt_token) {
+  useEffect(() => {
+    if (id && jwt_token && isServiceUpdated) {
       const fetchServiceList = async () => {
-        const services = await getServices(jwt_token);
+        const services = await GetCustomerServices(jwt_token);
         console.log("services", services);
         if (services.length > 0) {
           const extractedServiceList = services.map((service: any) => {
@@ -178,17 +208,27 @@ const StartUp = () => {
             })
           );
         }
+        dispatch(resetIsServiceUpdated());
       };
-      if (isExpired(jwt_token)) dispatch(removeAuthenticatedUserDetails());
-      else {
+      if (!isExpired(jwt_token)) {
         fetchServiceList();
+      } else if (
+        isExpired(jwt_token) &&
+        refreshToken &&
+        !isExpired(refreshToken)
+      ) {
+        router.replace("/session-expired");
+      } else {
+        dispatch(removeAuthenticatedUserDetails());
       }
     }
-  }, [user, id, jwt_token]);
+  }, [user, id, jwt_token, isServiceUpdated]);
 
   return (
     <>
-      {(isLoadingOnRefresh || isLoadingOnGetCustomerDetails) && (
+      {(isLoadingOnRefresh ||
+        isLoadingOnGetCustomerDetails ||
+        isLoadingOnGetCustomerServices) && (
         <Backdrop>
           <Loader />
         </Backdrop>
