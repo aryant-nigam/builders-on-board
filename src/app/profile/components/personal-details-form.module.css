@@ -17,3 +17,51 @@
   cursor: pointer;
   font-weight: 600;
 }
+
+.fields-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 15px 5px;
+}
+
+.services {
+  box-sizing: border-box;
+  cursor: pointer;
+  width: 58%;
+  margin: 0px 5px;
+  height: 100%;
+  font-size: 1.5em;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid black;
+  text-transform: capitalize;
+  outline: none;
+  /* width: 100%;
+  background-color: #fff;
+  font-size: 1em; */
+}
+.services-label {
+  width: 120px;
+  margin-top: 15px;
+  font-size: large;
+  font-weight: 500;
+  color: #4daa57;
+  text-transform: capitalize;
+}
+
+.edit-btn {
+  margin-top: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0px;
+  background-color: #4daa57;
+}

@@ -10,8 +10,10 @@ import useHttp from "@/hooks/use-http";
 import Snackbar from "./snackbar";
 import Backdrop from "./backdrop";
 import Loader from "./loader";
-import { useAppDispatch } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { removeAuthenticatedUserDetails } from "@/store/features/auth-slice";
+import { useRouter } from "next/navigation";
+import { resetServices } from "@/store/features/services-slice";
 
 function Navbar() {
   const [cookies, _, removeCookie] = useCookies(["user"]);
@@ -20,8 +22,10 @@ function Navbar() {
   const accessToken = cookies.user?.accessToken;
   const refreshToken = cookies.user?.refreshToken;
   const pathName = usePathname();
+  const router = useRouter();
+  const isBuilder = useAppSelector((state) => state.auth.user?.is_builder);
 
-  console.log(accessToken, refreshToken);
+  // console.log(accessToken, refreshToken);
 
   useEffect(() => {
     setIsAuthenticated(accessToken && !isExpired(accessToken));
@@ -46,8 +50,18 @@ function Navbar() {
       const response = await get(refreshToken);
       console.log(response);
     }
-    removeCookie("user");
-    dispatch(removeAuthenticatedUserDetails());
+
+    router.replace("/");
+    console.log("replaced", pathName);
+    setTimeout(() => {
+      removeCookie("user");
+      dispatch(removeAuthenticatedUserDetails());
+      dispatch(resetServices());
+      window.location.reload();
+    }, 20);
+    setTimeout(() => {
+      window.location.reload();
+    }, 30);
   };
 
   if (pathName !== "/session-expired")
@@ -76,7 +90,7 @@ function Navbar() {
           >
             Home
           </Link>
-          {isAuthenticated && (
+          {isAuthenticated && !isBuilder && (
             <Link
               href="/services"
               className={`${classes["nav-option"]} ${

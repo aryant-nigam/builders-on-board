@@ -39,7 +39,7 @@ const useHttp = (url: string) => {
     }
   }
 
-  const get = async (accessToken: string | null) => {
+  const get = async (accessToken: string | null, cache?: any) => {
     try {
       setIsLoading(true);
 
@@ -50,9 +50,11 @@ const useHttp = (url: string) => {
           "Content-type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
+        cache: cache!,
       });
 
       const data = await response.json();
+      console.log(data);
 
       if (!response.ok) {
         console.log(response);
@@ -68,7 +70,7 @@ const useHttp = (url: string) => {
         setIsLoading(false);
         setErrorMsg(errorMsg.message || "something went wrong");
         setResponseCode(404);
-        console.log("errorMsg");
+        console.log("errorMsg", errorMsg.message);
       }
     }
   };

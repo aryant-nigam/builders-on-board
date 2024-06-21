@@ -2,17 +2,10 @@
 import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
 import classes from "./search-form.module.css";
 import useHttp from "@/hooks/use-http";
-const services = [
-  "electronics",
-  "pest control",
-  "painting",
-  "flooring",
-  "automobile washing",
-  "gardening",
-];
+import { serviceTypesList } from "@/utils";
 
 function SearchForm() {
-  const [selectedService, setSelectedService] = useState(services[0]);
+  const [selectedService, setSelectedService] = useState(serviceTypesList[0]);
   const [pincode, setPincode] = useState("");
   const [message, setMessage] = useState("");
 
@@ -29,7 +22,7 @@ function SearchForm() {
   };
 
   const fetchData = async () => {
-    const data = await get();
+    const data = await get(null);
 
     if (data["pincode"].length !== 0) {
       setMessage(
@@ -67,7 +60,7 @@ function SearchForm() {
             onChange={serviceChangeHandler}
             defaultValue={selectedService}
           >
-            {services.map((service, index) => (
+            {serviceTypesList.map((service, index) => (
               <option
                 className={classes["service"]}
                 value={service}

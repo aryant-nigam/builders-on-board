@@ -4,7 +4,7 @@ import useInput from "@/hooks/use-input";
 import classes from "./form.module.css";
 import Input from "@/components/input";
 import { useState, useEffect } from "react";
-
+import { serviceTypesList } from "@/utils";
 import useHttp from "@/hooks/use-http";
 import Backdrop from "@/components/backdrop";
 import Loader from "@/components/loader";
@@ -17,17 +17,9 @@ function SignupFormBuilder({
   isLoginFormVisible: boolean;
   postSignUpHandler: () => void;
 }) {
-  const services = [
-    "electronics",
-    "pest control",
-    "painting",
-    "flooring",
-    "automobile washing",
-    "gardening",
-  ];
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
   const [signupStep, setSignupStep] = useState<number>(0);
-  const [serviceType, setserviceType] = useState(services[0]);
+  const [serviceType, setserviceType] = useState(serviceTypesList[0]);
 
   const { post, isLoading, errorMsg, successMsg, responseCode } = useHttp(
     "https://builders-on-board-be-2.onrender.com/builder"
@@ -177,16 +169,19 @@ function SignupFormBuilder({
   }, [isLoginFormVisible]);
 
   const formSubmitHandler = () => {
-    post({
-      email: email.toLowerCase(),
-      firstname: firstName.toLowerCase(),
-      lastname: lastName.toLowerCase(),
-      service_type: serviceType,
-      password: password,
-      fee: fee,
-      pincode: pincode,
-      phn_no: phn_no,
-    });
+    post(
+      {
+        email: email.toLowerCase(),
+        firstname: firstName.toLowerCase(),
+        lastname: lastName.toLowerCase(),
+        service_type: serviceType,
+        password: password,
+        fee: fee,
+        pincode: pincode,
+        phn_no: phn_no,
+      },
+      null
+    );
 
     resetEmail();
     resetFirstName();
@@ -358,7 +353,7 @@ function SignupFormBuilder({
               onChange={serviceChangeHandler}
               defaultValue={serviceType}
             >
-              {services.map((service, index) => (
+              {serviceTypesList.map((service, index) => (
                 <option
                   className={classes["service"]}
                   value={service}
@@ -417,14 +412,14 @@ function SignupFormBuilder({
             className={classes["signup-btn"]}
             onClick={formSubmitHandler}
             disabled={
-              !isEmailValid ||
-              !isFeeValid ||
-              !isFirstNameValid ||
-              !isLastNameValid ||
-              !isPhnNoValid ||
-              !isAddressValid ||
-              !isPasswordValid ||
-              !isReenteredPasswordValid
+              emailHasError ||
+              feeHasError ||
+              firstNameHasError ||
+              lastNameHasError ||
+              phnNoHasError ||
+              addressHasError ||
+              passwordHasError ||
+              reenteredPasswordHasError
             }
           >
             Sign up

@@ -2,26 +2,30 @@ import React, { useEffect, useState } from "react";
 import classes from "./service-list.module.css";
 import { ServiceListType } from "../page";
 import ServiceCard from "./service-card";
-import useHttp from "@/hooks/use-http";
-import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { isExpired } from "react-jwt";
-import { removeAuthenticatedUserDetails } from "@/store/features/auth-slice";
-import Loader from "@/components/loader";
 
 export interface IServiceCard {
   serviceId: number;
   serviceType: string;
   bookingDate: string;
   description: string;
-  address: string;
-  fee: number;
   isActive: boolean;
   isCancelled: boolean;
-  builderName: string;
-  builderPhnNo: string;
-  builderEmail: string;
   customerFeedback: string;
   customerStarRating: number;
+  builderFeedback: string;
+
+  customerId: number;
+  customerName: string;
+  customerEmail: string;
+  customerPhnNo: string;
+  address: string;
+  landmark: string;
+
+  builderId: number;
+  builderName: string;
+  builderEmail: string;
+  builderPhnNo: string;
+  fee: number;
 }
 
 // const serviceList: IServiceCard[] = [

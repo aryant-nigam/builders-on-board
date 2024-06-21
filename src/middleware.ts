@@ -1,5 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
-import { isExpired } from "react-jwt";
+import { decodeToken, isExpired } from "react-jwt";
+import { DecodedToken } from "./types";
 export function middleware(request: NextRequest) {
   const user = request.cookies.get("user");
   let url = request.url;
@@ -14,10 +15,20 @@ export function middleware(request: NextRequest) {
     const userCookie = JSON.parse(user?.value);
     const accessToken = userCookie.accessToken;
     const refreshToken = userCookie.refreshToken;
+    const decodedToken: DecodedToken = decodeToken(accessToken)!;
+    const isBuilder = decodedToken.sub.is_builder;
 
     // console.log("aryant", "\n", accessToken, "\n", isExpired(accessToken));
 
     // for service and profile page
+
+    if (isBuilder && url.includes("/services")) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/";
+      const response = NextResponse.redirect(url);
+      return response;
+    }
+
     if (
       isExpired(accessToken) &&
       (url.includes("/profile") || url.includes("/services"))
@@ -79,6 +90,16 @@ export function middleware(request: NextRequest) {
       const url = request.nextUrl.clone();
       url.pathname = "/";
       return NextResponse.redirect(url);
+    }
+  }
+
+  if (user && url.includes("/unauthorised")) {
+    {
+      {
+        const url = request.nextUrl.clone();
+        url.pathname = "/";
+        return NextResponse.redirect(url);
+      }
     }
   }
 }

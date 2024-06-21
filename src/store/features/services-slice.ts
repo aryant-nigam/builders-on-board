@@ -69,7 +69,14 @@ const servicesSlice = createSlice({
     },
 
     resetIsServiceUpdated: (state) => {
+      console.log("called resetIsServiceUpdated");
       state.isUpdated = false;
+    },
+
+    resetServices: (state) => {
+      state.activeServicesList = [];
+      state.completedServicesList = [];
+      state.cancelledServicesList = [];
     },
   },
 });
@@ -80,5 +87,6 @@ export const {
   updateCompletedServices,
   setIsServiceUpdated,
   resetIsServiceUpdated,
+  resetServices,
 } = servicesSlice.actions;
 export default servicesSlice.reducer;

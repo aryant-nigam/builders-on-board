@@ -17,6 +17,7 @@ import { useAppDispatch } from "@/store/hooks";
 import { removeAuthenticatedUserDetails } from "@/store/features/auth-slice";
 import { isExpired } from "react-jwt";
 import { setIsServiceUpdated } from "@/store/features/services-slice";
+import UnAuth from "@/components/unauth";
 
 const categories: string[] = [
   "electronics",
@@ -232,9 +233,7 @@ function ServicesPage() {
     errorMsg: errorMsgOnCustomerUpdate,
     successMsg: successMsgOnCustomerUpdate,
     responseCode,
-  } = useHttp(
-    `https://builders-on-board-be-2.onrender.com/customer?id=${customerId}`
-  );
+  } = useHttp(`https://builders-on-board-be-2.onrender.com/customer`);
 
   const {
     post,
@@ -248,7 +247,6 @@ function ServicesPage() {
       timestamp: `${Math.floor(serviceDetails?.timestamp! / 1000)}`,
       description: serviceDetails?.description,
       builder_id: builderSelected?.builder_id,
-      customer_id: customerId,
     };
     const response = await post(body, accessToken);
   };
@@ -311,6 +309,7 @@ function ServicesPage() {
 
   return (
     <div className={classes["service-page"]}>
+      {<UnAuth />}
       {isLoadingOnCustomerUpdate ||
         (isLoadingOnCreateService && (
           <Backdrop>

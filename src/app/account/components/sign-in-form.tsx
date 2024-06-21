@@ -4,10 +4,8 @@ import classes from "./form.module.css";
 import useInput from "@/hooks/use-input";
 import Input from "@/components/input";
 import { useAppDispatch } from "@/store/hooks";
-import {
-  setAuthenticatedUserDetails,
-  DecodedToken,
-} from "@/store/features/auth-slice";
+import { setAuthenticatedUserDetails } from "@/store/features/auth-slice";
+import { DecodedToken } from "@/types";
 import { useRouter } from "next/navigation";
 import useHttp from "@/hooks/use-http";
 import { decodeToken, isExpired } from "react-jwt";

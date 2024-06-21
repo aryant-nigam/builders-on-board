@@ -28,10 +28,11 @@ function ServiceCard({
   const dispatch = useAppDispatch();
   const customerId = useAppSelector((state) => state.auth.user?.id);
   const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const isBuilder = useAppSelector((state) => state.auth.user?.is_builder);
   const refreshToken = useAppSelector((state) => state.auth.refreshToken);
   const router = useRouter();
   const { put, isLoading, successMsg, errorMsg } = useHttp(
-    `https://builders-on-board-be-2.onrender.com/services?customer_id=${customerId}&service_id=${service.serviceId}`
+    `https://builders-on-board-be-2.onrender.com/services?service_id=${service.serviceId}`
   );
 
   const [isFeedbackFormOpen, setIsFeedbackFormOpen] = useState<Boolean>(false);
@@ -72,13 +73,23 @@ function ServiceCard({
       setIsFeedbackFormOpen(false);
       const response = await put(feedbackBody, accessToken);
       console.log("done Be");
+      let updatedService: any = { ...service };
+      if (!isBuilder)
+        updatedService = {
+          ...updatedService,
+          customerStarRating: feedbackBody["customer_star_rating"],
+          customerFeedback: feedbackBody["customer_feedback"],
+        };
+      else {
+        updatedService = {
+          ...updatedService,
+          builderFeedback: feedbackBody["builder_feedback"],
+        };
+      }
+
       dispatch(
         updateCompletedServices({
-          service: {
-            ...service,
-            customerFeedback: feedbackBody["customer_feedback"],
-            customerStarRating: feedbackBody["customer_star_rating"],
-          },
+          service: updatedService,
         })
       );
       console.log("done store");
@@ -150,19 +161,31 @@ function ServiceCard({
         <h4 className={classes["details-label"]}>Address:</h4>
         <p className={classes["details-value"]}>{service.address}</p>
       </div>
+      <div className={classes.details}>
+        <h4 className={classes["details-label"]}>landmark:</h4>
+        <p className={classes["details-value"]}>{service.landmark}</p>
+      </div>
       <div className={classes["hr"]}></div>
       <div className={classes.details}>
-        <h4 className={classes["details-label"]}>Expert name:</h4>
-        <p className={classes["details-value"]}>{service.builderName}</p>
+        <h4 className={classes["details-label"]}>
+          {isBuilder ? "Customer Name:" : "Expert Name:"}
+        </h4>
+        <p className={classes["details-value"]}>
+          {isBuilder ? service.customerName : service.builderName}
+        </p>
       </div>
       <div className={classes.details}>
         <div className={classes.contact}>
           <img src="phone.png" className={classes["contact-icon"]}></img>
-          <p className={classes["details-value"]}>{service.builderPhnNo}</p>
+          <p className={classes["details-value"]}>
+            {isBuilder ? service.customerPhnNo : service.builderPhnNo}
+          </p>
         </div>
         <div className={classes.contact}>
           <img src="email.png" className={classes["contact-icon"]}></img>
-          <p className={classes["details-value"]}>{service.builderEmail}</p>
+          <p className={classes["details-value"]}>
+            {isBuilder ? service.customerEmail : service.builderEmail}
+          </p>
         </div>
       </div>
       {type === ServiceListType.ACTIVE && (
@@ -170,11 +193,15 @@ function ServiceCard({
           cancel
         </button>
       )}
-      {type === ServiceListType.INACTIVE && !service.customerFeedback && (
-        <button className={classes["btn"]} onClick={clickHandler}>
-          write feedback
-        </button>
-      )}
+      {type === ServiceListType.INACTIVE &&
+        ((!isBuilder &&
+          !service.customerFeedback &&
+          !service.customerStarRating) ||
+          (isBuilder && !service.builderFeedback)) && (
+          <button className={classes["btn"]} onClick={clickHandler}>
+            write feedback
+          </button>
+        )}
     </div>
   );
 }

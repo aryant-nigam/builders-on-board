@@ -18,12 +18,9 @@ export interface Iworker {
 
 export interface Builder {
   builder_id: string;
-  email: string;
   fee: number;
   firstname: string;
   lastname: string;
-  phn_no: string;
-  pincode: string;
   service_type: string;
 }
 
@@ -42,11 +39,11 @@ function CategorySegment({
   const accessToken = useAppSelector((state) => state.auth.accessToken);
 
   const { get, isLoading, errorMsg } = useHttp(
-    `https://builders-on-board-be-2.onrender.com/builder?service_type=${serviceType}&pincode=${pincode}`
+    `https://builders-on-board-be-2.onrender.com/builders-list?service_type=${serviceType}&pincode=${pincode}`
   );
 
   console.log(
-    `https://builders-on-board-be-2.onrender.com/builder?service_type=${serviceType}&pincode=${pincode}`
+    `https://builders-on-board-be-2.onrender.com/builders-list?service_type=${serviceType}&pincode=${pincode}`
   );
   const [buildersList, setBuildersList] = useState<Builder[]>([]);
   const [builderSelected, setBuilderSelected] = useState<Builder | null>();
@@ -61,7 +58,7 @@ function CategorySegment({
     fetchBuilders();
   }, []);
 
-  if (buildersList && buildersList.length !== 0) {
+  if (buildersList.length !== 0) {
     !selectedBuilder && saveBuilder(builderSelected!);
   }
 

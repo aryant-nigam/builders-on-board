@@ -2,14 +2,7 @@
 import React, { useRef, useState } from "react";
 import classes from "./feedback-form.module.css";
 import useRating from "./use-rating";
-import useHttp from "@/hooks/use-http";
-import { useAppDispatch, useAppSelector } from "@/store/hooks";
-import Backdrop from "@/components/backdrop";
-import Loader from "@/components/loader";
-import Snackbar from "@/components/snackbar";
-import { isExpired } from "react-jwt";
-import { useRouter } from "next/navigation";
-import { removeAuthenticatedUserDetails } from "@/store/features/auth-slice";
+import { useAppSelector } from "@/store/hooks";
 
 function FeedbackForm({
   serviceId,
@@ -23,6 +16,7 @@ function FeedbackForm({
   const { rating, Rating } = useRating();
   const [feedbackError, setFeedbackError] = useState<boolean>(false);
   const feedbackRef = useRef<HTMLTextAreaElement>(null);
+  const isBuilder = useAppSelector((state) => state.auth.user?.is_builder);
 
   // const sendFeedbackHandler = async () => {
   //   let body: any = { customer_star_rating: rating };
@@ -43,12 +37,15 @@ function FeedbackForm({
   const feedbackBtnClickHandler = () => {
     console.log("feedback ", feedbackRef.current?.value);
     console.log("current rating ", rating);
-    let body: any = { customer_star_rating: rating };
+    let body: any;
+    if (!isBuilder) body = { ...body, customer_star_rating: rating };
 
     if (feedbackRef.current?.value) {
       if (/^[a-zA-Z0-9. ]*$/.test(feedbackRef.current?.value)) {
         setFeedbackError(false);
-        body["customer_feedback"] = feedbackRef.current?.value;
+        if (!isBuilder)
+          body = { ...body, customer_feedback: feedbackRef.current?.value };
+        else body = { ...body, builder_feedback: feedbackRef.current?.value };
       } else {
         setFeedbackError(true);
       }
@@ -86,7 +83,7 @@ function FeedbackForm({
         </p>
       )}
 
-      <Rating />
+      {!isBuilder && <Rating />}
       <button className={classes["send-btn"]} onClick={feedbackBtnClickHandler}>
         share
       </button>

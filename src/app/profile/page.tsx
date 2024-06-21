@@ -5,6 +5,7 @@ import CollapsibleTile from "./components/collapsible-tiles";
 import ServiceList from "./components/service-list";
 import { useAppSelector } from "@/store/hooks";
 import PersonalDetailsForm from "./components/personal-details-form";
+import UnAuth from "@/components/unauth";
 
 export enum ServiceListType {
   ACTIVE,
@@ -38,6 +39,7 @@ function ProfilePage() {
 
   return (
     <div className={classes["profile-page"]}>
+      {<UnAuth />}
       <div className={classes["profile-page-left"]}>
         <CollapsibleTile title="Personal Details">
           <PersonalDetailsForm />

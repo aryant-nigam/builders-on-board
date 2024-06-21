@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import classes from "./input.module.css";
 
 export interface IInput {

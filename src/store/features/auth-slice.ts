@@ -1,30 +1,17 @@
 "use client";
 import { createSlice } from "@reduxjs/toolkit";
-
-interface Iuser {
-  id: number;
-  is_builder: boolean;
-}
+import { Iuser } from "@/types";
 
 interface IPersonaInformation {
   firstname: string;
   lastname: string;
   email: string;
-  address: string | null;
-  landmark: string | null;
   phoneNumber: string | null;
   pincode: string | null;
-}
-
-export interface DecodedToken {
-  csrf: string;
-  exp: number;
-  fresh: boolean;
-  iat: number;
-  jti: string;
-  nbf: number;
-  sub: Iuser;
-  type: string;
+  address: string | null;
+  landmark: string | null;
+  serviceType: string | null;
+  fee: number | null;
 }
 
 interface IAuth {

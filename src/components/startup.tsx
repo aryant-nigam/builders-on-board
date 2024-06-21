@@ -11,12 +11,12 @@ import {
   resetIsServiceUpdated,
 } from "@/store/features/services-slice";
 import { decodeToken, isExpired } from "react-jwt";
-import { DecodedToken } from "@/store/features/auth-slice";
+import { DecodedToken } from "@/types";
 import useHttp from "@/hooks/use-http";
 import { useEffect } from "react";
 import Backdrop from "./backdrop";
 import Loader from "./loader";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const transformDate = (date: Date) => {
   const day = date.toLocaleString("en-IN", { day: "2-digit" });
@@ -30,6 +30,7 @@ const StartUp = () => {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
   const id = user?.id;
+  const isBuilder = user?.is_builder;
   const jwt_token = useAppSelector((state) => state.auth.accessToken);
   const refreshToken = useAppSelector((state) => state.auth.refreshToken);
   const isServiceUpdated = useAppSelector((state) => state.services.isUpdated);
@@ -45,31 +46,20 @@ const StartUp = () => {
     get: getCustomerDetails,
     isLoading: isLoadingOnGetCustomerDetails,
     errorMsg: errorMessageOnGetCustomerDetails,
-  } = useHttp(`https://builders-on-board-be-2.onrender.com/customer?id=${id}`);
+  } = useHttp("https://builders-on-board-be-2.onrender.com/customer");
 
   const {
-    get: GetCustomerServices,
-    isLoading: isLoadingOnGetCustomerServices,
-    successMsg: successMsgOnGetCustomerServices,
-    errorMsg: errorMsgOnGetCustomerServices,
-  } = useHttp(
-    `https://builders-on-board-be-2.onrender.com/services?customer_id=${id}`
-  );
+    get: getServices,
+    isLoading: isLoadingOnGetServices,
+    successMsg: successMsgOnGetServices,
+    errorMsg: errorMsgOnGetServices,
+  } = useHttp("https://builders-on-board-be-2.onrender.com/services");
 
   const {
     get: getBuilderDetails,
     isLoading: isLoadingOnGetBuilderDetails,
     errorMsg: errorMessageOnGetBuilderDetails,
-  } = useHttp(`https://builders-on-board-be-2.onrender.com/builder?id=${id}`);
-
-  // const {
-  //   get: getServices,
-  //   isLoading: isLoadingOnGetServices,
-  //   successMsg: successMsgOnGetServices,
-  //   errorMsg: errorMsgOnGetServices,
-  // } = useHttp(
-  //   `https://builders-on-board-be-2.onrender.com/services?customer_id=${id}`
-  // );
+  } = useHttp("https://builders-on-board-be-2.onrender.com/builder");
 
   //simply fetch data in cookies or refresh token login
   useEffect(() => {
@@ -149,18 +139,28 @@ const StartUp = () => {
     // this effect will only be triggered when there exists a user in auth slice
     if (id && jwt_token) {
       const fetchUserData = async () => {
-        const personal_data = await getCustomerDetails(jwt_token);
-        console.log("personal details", personal_data);
-        if (personal_data) {
+        let personalData: any = {};
+        if (!isBuilder) {
+          personalData = await getCustomerDetails(jwt_token, "no-store");
+        } else {
+          console.log("hi");
+          personalData = await getBuilderDetails(jwt_token, "no-store");
+        }
+        console.log("personal details", personalData);
+        if (personalData) {
           dispatch(
             setAuthenticatedUserPersonalDetails({
-              firstname: personal_data.firstname,
-              lastname: personal_data.lastname,
-              email: personal_data.email,
-              address: personal_data.address,
-              landmark: personal_data.landmark,
-              phoneNumber: personal_data.phn_no,
-              pincode: personal_data.pincode,
+              firstname: personalData.firstname,
+              lastname: personalData.lastname,
+              email: personalData.email,
+              phoneNumber: personalData.phn_no,
+              pincode: personalData.pincode,
+              address: personalData.address ? personalData.address : null,
+              landmark: personalData.landmark ? personalData.landmark : null,
+              serviceType: personalData.service_type
+                ? personalData.service_type
+                : null,
+              fee: personalData.fee ? personalData.fee : null,
             })
           );
         }
@@ -180,9 +180,10 @@ const StartUp = () => {
   }, [user, id, jwt_token]);
 
   useEffect(() => {
-    if (id && jwt_token && isServiceUpdated) {
+    console.log("sobj", { id, jwt_token, isServiceUpdated });
+    if ((id && jwt_token) || isServiceUpdated) {
       const fetchServiceList = async () => {
-        const services = await GetCustomerServices(jwt_token);
+        const services = await getServices(jwt_token, "no-store");
         console.log("services", services);
         if (services.length > 0) {
           const extractedServiceList = services.map((service: any) => {
@@ -191,17 +192,27 @@ const StartUp = () => {
               serviceType: service.service_type,
               bookingDate: transformDate(new Date(service.timestamp * 1000)),
               description: service.description,
-              address: service.customer_address,
-              fee: service.builder_fee,
               isActive: service.is_active,
               isCancelled: service.is_cancelled,
-              builderName: `${service.builder_first_name} ${service.builder_last_name}`,
-              builderPhnNo: service.builder_phn_no,
-              builderEmail: service.builders_email,
               customerFeedback: service.customer_feedback,
               customerStarRating: service.customer_star_rating,
+              builderFeedback: service.builder_feedback,
+
+              customerId: service.customer_id,
+              customerName: `${service.customer_first_name} ${service.customer_last_name}`,
+              customerEmail: service.customer_email,
+              customerPhnNo: service.customer_phn_no,
+              address: service.customer_address,
+              landmark: service.customer_landmark,
+
+              builderId: service.builder_id,
+              builderName: `${service.builder_first_name} ${service.builder_last_name}`,
+              builderEmail: service.builders_email,
+              builderPhnNo: service.builder_phn_no,
+              fee: service.builder_fee,
             };
           });
+          console.log("extracted", extractedServiceList);
           dispatch(
             initialiseServices({
               servicesList: services.length > 0 ? extractedServiceList : [],
@@ -210,10 +221,10 @@ const StartUp = () => {
         }
         dispatch(resetIsServiceUpdated());
       };
-      if (!isExpired(jwt_token)) {
+      if (!isExpired(jwt_token!)) {
         fetchServiceList();
       } else if (
-        isExpired(jwt_token) &&
+        isExpired(jwt_token!) &&
         refreshToken &&
         !isExpired(refreshToken)
       ) {
@@ -228,7 +239,7 @@ const StartUp = () => {
     <>
       {(isLoadingOnRefresh ||
         isLoadingOnGetCustomerDetails ||
-        isLoadingOnGetCustomerServices) && (
+        isLoadingOnGetServices) && (
         <Backdrop>
           <Loader />
         </Backdrop>
