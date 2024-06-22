@@ -128,7 +128,6 @@ function ServiceList({
   type: ServiceListType;
   servicesList: IServiceCard[];
 }) {
-  console.log(servicesList);
   return (
     <div className={classes["service-list"]}>
       {servicesList.length !== 0 &&

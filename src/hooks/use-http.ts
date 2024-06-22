@@ -3,16 +3,16 @@
 import { useEffect, useState } from "react";
 
 const useHttp = (url: string) => {
-  const [responseCode, setResponseCode] = useState<number | null>(null);
+  const [responseCode, setResponseCode] = useState<number>(0);
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+  const [delay, setDelay] = useState(6000);
   useEffect(() => {
     if (errorMsg) {
       const id = setTimeout(() => {
         setErrorMsg("");
-      }, 6000);
+      }, delay);
 
       return () => {
         clearTimeout(id);
@@ -24,7 +24,7 @@ const useHttp = (url: string) => {
     if (successMsg) {
       const id = setTimeout(() => {
         setSuccessMsg("");
-      }, 6000);
+      }, delay);
 
       return () => {
         clearTimeout(id);
@@ -214,11 +214,15 @@ const useHttp = (url: string) => {
     }
   };
 
+  const applyDelay = (delay: number) => {
+    setDelay(delay);
+  };
   return {
     isLoading,
     errorMsg,
     successMsg,
     responseCode,
+    applyDelay,
     get,
     post,
     put,

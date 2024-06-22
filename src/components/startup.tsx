@@ -116,6 +116,7 @@ const StartUp = () => {
             refreshToken: cookie.user.refreshToken,
           })
         );
+        console.log(id, jwt_token);
       } else if (
         cookie.user.refreshToken &&
         !isExpired(cookie.user.refreshToken)
@@ -143,7 +144,7 @@ const StartUp = () => {
         if (!isBuilder) {
           personalData = await getCustomerDetails(jwt_token, "no-store");
         } else {
-          console.log("hi");
+          console.log("hi 1");
           personalData = await getBuilderDetails(jwt_token, "no-store");
         }
         console.log("personal details", personalData);
@@ -174,14 +175,23 @@ const StartUp = () => {
       ) {
         router.replace("/session-expired");
       } else {
+        console.log("hi 2");
         dispatch(removeAuthenticatedUserDetails());
       }
     }
   }, [user, id, jwt_token]);
 
   useEffect(() => {
-    console.log("sobj", { id, jwt_token, isServiceUpdated });
-    if ((id && jwt_token) || isServiceUpdated) {
+    //ye galti ka kaaran ho skta hai
+    if (id && jwt_token && isServiceUpdated) {
+      console.log(
+        "id",
+        id,
+        "jwt_token",
+        jwt_token,
+        "isServiceUpdated",
+        isServiceUpdated
+      );
       const fetchServiceList = async () => {
         const services = await getServices(jwt_token, "no-store");
         console.log("services", services);
@@ -230,6 +240,7 @@ const StartUp = () => {
       ) {
         router.replace("/session-expired");
       } else {
+        console.log("hi 3");
         dispatch(removeAuthenticatedUserDetails());
       }
     }
@@ -239,7 +250,8 @@ const StartUp = () => {
     <>
       {(isLoadingOnRefresh ||
         isLoadingOnGetCustomerDetails ||
-        isLoadingOnGetServices) && (
+        isLoadingOnGetServices ||
+        isLoadingOnGetBuilderDetails) && (
         <Backdrop>
           <Loader />
         </Backdrop>

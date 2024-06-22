@@ -87,6 +87,7 @@ interface IVerticalStepper {
   hasSaved: boolean;
   shouldRenderSubmissionStep: boolean;
   submitHandler: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  isSubmitDisabled: boolean;
 }
 
 export default function VerticalStepper({
@@ -98,6 +99,7 @@ export default function VerticalStepper({
   hasSaved,
   shouldRenderSubmissionStep,
   submitHandler,
+  isSubmitDisabled,
 }: IVerticalStepper) {
   //   const [activeStep, setActiveStep] = useState<number>(1);
 
@@ -118,7 +120,11 @@ export default function VerticalStepper({
       ))}
       {shouldRenderSubmissionStep && activeStep === totalSteps && (
         <div className={classes["last-step-container"]}>
-          <button className={classes["submit-btn"]} onClick={submitHandler}>
+          <button
+            className={classes["submit-btn"]}
+            onClick={submitHandler}
+            disabled={isSubmitDisabled}
+          >
             Submit
           </button>
           <button className={classes["back-btn"]} onClick={handleBack}>

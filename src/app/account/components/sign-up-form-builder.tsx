@@ -68,10 +68,6 @@ function SignupFormBuilder({
     return reenteredPassword.trim().length > 8 && reenteredPassword == password;
   };
 
-  const addressValidator = (address: string): boolean => {
-    return address.length != 0;
-  };
-
   const {
     value: email,
     isValid: isEmailValid,
@@ -127,15 +123,6 @@ function SignupFormBuilder({
   } = useInput({ validator: phnNoValidator });
 
   const {
-    value: address,
-    isValid: isAddressValid,
-    hasError: addressHasError,
-    updateValueOnKeyStroke: updateAddressOnKeystroke,
-    updateIsTouched: updateIsAddressTouched,
-    reset: resetAddress,
-  } = useInput({ validator: addressValidator });
-
-  const {
     value: password,
     isValid: isPasswordValid,
     hasError: passwordHasError,
@@ -161,7 +148,6 @@ function SignupFormBuilder({
       resetFee();
       resetPincode();
       resetPhnNo();
-      resetAddress();
       resetPassword();
       resetReenteredPassword();
       setSignupStep(0);
@@ -189,7 +175,6 @@ function SignupFormBuilder({
     resetFee();
     resetPincode();
     resetPhnNo();
-    resetAddress();
     resetPassword();
     resetReenteredPassword();
   };
@@ -314,16 +299,24 @@ function SignupFormBuilder({
             ></Input>
           </div>
 
-          <Input
-            type="text"
-            value={address}
-            valueHasError={addressHasError}
-            errorMsg="Please enter a valid address"
-            placeholder="Address"
-            updateValueOnKeyStroke={updateAddressOnKeystroke}
-            updateIsTouched={updateIsAddressTouched}
-            className={classes["long-input"]}
-          ></Input>
+          <div className={classes["fields-container"]}>
+            <h2 className={classes["services-label"]}>Expertise :</h2>
+            <select
+              className={classes["services"]}
+              onChange={serviceChangeHandler}
+              defaultValue={serviceType}
+            >
+              {serviceTypesList.map((service, index) => (
+                <option
+                  className={classes["service"]}
+                  value={service}
+                  key={index}
+                >
+                  {service}
+                </option>
+              ))}
+            </select>
+          </div>
 
           <div className={classes["form-segment-actions"]}>
             <button className={classes["prev-btn"]}>
@@ -346,24 +339,6 @@ function SignupFormBuilder({
 
       {signupStep === 2 && (
         <div className={classes["form-segment"]}>
-          <div className={classes["fields-container"]}>
-            <h2 className={classes["services-label"]}>Expertise :</h2>
-            <select
-              className={classes["services"]}
-              onChange={serviceChangeHandler}
-              defaultValue={serviceType}
-            >
-              {serviceTypesList.map((service, index) => (
-                <option
-                  className={classes["service"]}
-                  value={service}
-                  key={index}
-                >
-                  {service}
-                </option>
-              ))}
-            </select>
-          </div>
           <div className={classes["fields-container"]}>
             <Input
               type="password"
@@ -417,7 +392,6 @@ function SignupFormBuilder({
               firstNameHasError ||
               lastNameHasError ||
               phnNoHasError ||
-              addressHasError ||
               passwordHasError ||
               reenteredPasswordHasError
             }

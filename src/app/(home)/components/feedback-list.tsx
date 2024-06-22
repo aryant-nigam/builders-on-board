@@ -20,7 +20,7 @@ function FeedbackList() {
     const getFeedbacks = async () => {
       const response = await get(null);
       console.log(response);
-      if (response.length > 0) {
+      if (response && response.length > 0) {
         const list = response.map((feedback: any, index: number) => {
           return (
             <FeedbackCard

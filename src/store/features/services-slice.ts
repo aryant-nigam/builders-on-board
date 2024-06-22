@@ -1,8 +1,10 @@
 "use client";
 import { createSlice } from "@reduxjs/toolkit";
+import { stat } from "fs";
 
 interface IServiceSlice {
   isUpdated: boolean;
+  inactiveServicesList: any[];
   activeServicesList: any[];
   completedServicesList: any[];
   cancelledServicesList: any[];
@@ -10,6 +12,7 @@ interface IServiceSlice {
 
 const initialState: IServiceSlice = {
   isUpdated: true,
+  inactiveServicesList: [],
   activeServicesList: [],
   completedServicesList: [],
   cancelledServicesList: [],
@@ -25,11 +28,24 @@ const servicesSlice = createSlice({
       state.cancelledServicesList = [];
       action.payload.servicesList.forEach((service: any) => {
         if (service.isCancelled) state.cancelledServicesList.push(service);
+        else if (service.isActive === null)
+          state.inactiveServicesList.push(service);
         else {
           if (service.isActive) state.activeServicesList.push(service);
-          else if (!service.isActive) state.completedServicesList.push(service);
+          else if (service.isActive == false)
+            state.completedServicesList.push(service);
         }
       });
+    },
+
+    acceptService: (state, action) => {
+      state.activeServicesList.push(action.payload.service);
+      state.inactiveServicesList = state.inactiveServicesList.filter(
+        (service) => service.serviceId != action.payload.service.serviceId
+      );
+      state.activeServicesList.sort(
+        (serviceA, serviceB) => serviceB.timestamp - serviceA.timestamp
+      );
     },
 
     completeService: (state, action) => {
@@ -46,6 +62,9 @@ const servicesSlice = createSlice({
     cancelService: (state, action) => {
       state.cancelledServicesList.push(action.payload.service);
       state.activeServicesList = state.activeServicesList.filter(
+        (service) => service.serviceId != action.payload.service.serviceId
+      );
+      state.inactiveServicesList = state.inactiveServicesList.filter(
         (service) => service.serviceId != action.payload.service.serviceId
       );
       state.cancelledServicesList.sort(
@@ -75,13 +94,16 @@ const servicesSlice = createSlice({
 
     resetServices: (state) => {
       state.activeServicesList = [];
+      state.inactiveServicesList = [];
       state.completedServicesList = [];
       state.cancelledServicesList = [];
     },
   },
 });
+
 export const {
   initialiseServices,
+  acceptService,
   completeService,
   cancelService,
   updateCompletedServices,

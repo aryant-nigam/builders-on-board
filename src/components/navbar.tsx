@@ -50,7 +50,6 @@ function Navbar() {
       const response = await get(refreshToken);
       console.log(response);
     }
-
     router.replace("/");
     console.log("replaced", pathName);
     setTimeout(() => {

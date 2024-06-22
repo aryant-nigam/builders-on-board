@@ -35,17 +35,19 @@ function FeedbackForm({
   // };
 
   const feedbackBtnClickHandler = () => {
-    console.log("feedback ", feedbackRef.current?.value);
-    console.log("current rating ", rating);
-    let body: any;
+    // console.log("feedback ", feedbackRef.current?.value);
+    // console.log("current rating ", rating);
+    let body: any = {};
     if (!isBuilder) body = { ...body, customer_star_rating: rating };
 
     if (feedbackRef.current?.value) {
       if (/^[a-zA-Z0-9. ]*$/.test(feedbackRef.current?.value)) {
         setFeedbackError(false);
-        if (!isBuilder)
+        if (!isBuilder) {
           body = { ...body, customer_feedback: feedbackRef.current?.value };
-        else body = { ...body, builder_feedback: feedbackRef.current?.value };
+        } else {
+          body = { ...body, builder_feedback: feedbackRef.current?.value };
+        }
       } else {
         setFeedbackError(true);
       }

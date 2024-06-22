@@ -10,6 +10,7 @@ import UnAuth from "@/components/unauth";
 export enum ServiceListType {
   ACTIVE,
   INACTIVE,
+  COMPLETED,
   CANCELLED,
 }
 
@@ -25,6 +26,9 @@ function ProfilePage() {
     (state) => state.auth.userPersonalInformation?.lastname
   );
 
+  const inactiveServicesList = useAppSelector(
+    (state) => state.services.inactiveServicesList
+  );
   const activeServicesList = useAppSelector(
     (state) => state.services.activeServicesList
   );
@@ -35,7 +39,12 @@ function ProfilePage() {
     (state) => state.services.cancelledServicesList
   );
 
-  // console.log(activeServicesList, completedServicesList, cancelledServicesList);
+  console.log(
+    inactiveServicesList,
+    activeServicesList,
+    completedServicesList,
+    cancelledServicesList
+  );
 
   return (
     <div className={classes["profile-page"]}>
@@ -43,6 +52,19 @@ function ProfilePage() {
       <div className={classes["profile-page-left"]}>
         <CollapsibleTile title="Personal Details">
           <PersonalDetailsForm />
+        </CollapsibleTile>
+
+        <CollapsibleTile title="Services Requested">
+          {inactiveServicesList.length !== 0 ? (
+            <ServiceList
+              type={ServiceListType.INACTIVE}
+              servicesList={inactiveServicesList}
+            ></ServiceList>
+          ) : (
+            <p className={classes["empty-list-message"]}>
+              You have no requested services !
+            </p>
+          )}
         </CollapsibleTile>
 
         <CollapsibleTile title="Active Services">
@@ -61,7 +83,7 @@ function ProfilePage() {
         <CollapsibleTile title="Completed Services">
           {completedServicesList.length !== 0 ? (
             <ServiceList
-              type={ServiceListType.INACTIVE}
+              type={ServiceListType.COMPLETED}
               servicesList={completedServicesList}
             ></ServiceList>
           ) : (

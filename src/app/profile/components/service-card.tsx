@@ -6,7 +6,9 @@ import { toTitleCase } from "@/utils";
 import { ServiceListType } from "../page";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
+  acceptService,
   cancelService,
+  completeService,
   updateCompletedServices,
 } from "@/store/features/services-slice";
 import useHttp from "@/hooks/use-http";
@@ -37,39 +39,21 @@ function ServiceCard({
 
   const [isFeedbackFormOpen, setIsFeedbackFormOpen] = useState<Boolean>(false);
 
-  const cancelServiceRequest = async () => {
-    const response = await put({ is_cancelled: true }, accessToken);
-    if (response == 200) {
-      setTimeout(() => {
-        dispatch(
-          cancelService({
-            service: { ...service, isActive: false, isCancelled: true },
-          })
-        );
-      }, 3000);
-    }
-  };
-
-  const cancelServiceHandler = () => {
+  const canSendRequest = () => {
     if (isExpired(accessToken!)) {
       if (refreshToken && !isExpired(refreshToken)) {
         router.replace("/session-expired");
       } else {
         dispatch(removeAuthenticatedUserDetails());
       }
+      return false;
     } else {
-      cancelServiceRequest();
+      return true;
     }
   };
 
   const sendFeedbackHandler = async (feedbackBody: any) => {
-    if (isExpired(accessToken!)) {
-      if (refreshToken && !isExpired(refreshToken)) {
-        router.replace("/session-expired");
-      } else {
-        dispatch(removeAuthenticatedUserDetails());
-      }
-    } else {
+    if (canSendRequest()) {
       setIsFeedbackFormOpen(false);
       const response = await put(feedbackBody, accessToken);
       console.log("done Be");
@@ -108,11 +92,48 @@ function ServiceCard({
     }
   };
 
-  const clickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (type === ServiceListType.ACTIVE) {
-      cancelServiceHandler();
-    } else if (type === ServiceListType.INACTIVE) {
-      openFeedbackFormHandler();
+  const acceptServiceHandler = async () => {
+    if (canSendRequest()) {
+      const response = await put({ is_active: true }, accessToken);
+      if (response == 200) {
+        setTimeout(() => {
+          dispatch(
+            acceptService({
+              service: { ...service, isActive: true },
+            })
+          );
+        }, 3000);
+      }
+    }
+  };
+
+  const completeServiceHandler = async () => {
+    if (canSendRequest()) {
+      const response = await put({ is_active: false }, accessToken);
+      if (response == 200) {
+        setTimeout(() => {
+          dispatch(
+            completeService({
+              service: { ...service, isActive: false },
+            })
+          );
+        }, 3000);
+      }
+    }
+  };
+
+  const cancelServiceHandler = async () => {
+    if (canSendRequest()) {
+      const response = await put({ is_cancelled: true }, accessToken);
+      if (response == 200) {
+        setTimeout(() => {
+          dispatch(
+            cancelService({
+              service: { ...service, isActive: false, isCancelled: true },
+            })
+          );
+        }, 3000);
+      }
     }
   };
 
@@ -136,7 +157,9 @@ function ServiceCard({
       )}
       {successMsg && <Snackbar message={successMsg} />}
       {errorMsg && <Snackbar message={errorMsg} />}
-      <p>{service.serviceId}</p>
+      {type === ServiceListType.CANCELLED && (
+        <p className={classes.cancelled}>Cancelled</p>
+      )}
       <div className={classes.details}>
         <h4 className={classes["details-label"]}>Service:</h4>
         <p className={classes["details-value"]}>
@@ -188,20 +211,52 @@ function ServiceCard({
           </p>
         </div>
       </div>
-      {type === ServiceListType.ACTIVE && (
-        <button className={classes["btn"]} onClick={clickHandler}>
-          cancel
-        </button>
-      )}
-      {type === ServiceListType.INACTIVE &&
-        ((!isBuilder &&
-          !service.customerFeedback &&
-          !service.customerStarRating) ||
-          (isBuilder && !service.builderFeedback)) && (
-          <button className={classes["btn"]} onClick={clickHandler}>
-            write feedback
-          </button>
+      <div className={classes["service-actions"]}>
+        {type === ServiceListType.INACTIVE && (
+          <>
+            <button
+              className={classes["reject-btn"]}
+              onClick={cancelServiceHandler}
+              style={{ marginRight: `${isBuilder ? "15px" : "0px"}` }}
+            >
+              {isBuilder ? "reject" : "cancel"}
+            </button>
+            {isBuilder && (
+              <button className={classes["btn"]} onClick={acceptServiceHandler}>
+                accept
+              </button>
+            )}
+          </>
         )}
+
+        {type === ServiceListType.ACTIVE && isBuilder && (
+          <>
+            <button
+              className={classes["reject-btn"]}
+              onClick={cancelServiceHandler}
+              style={{ marginRight: "15px" }}
+            >
+              cancel
+            </button>
+            <button className={classes["btn"]} onClick={completeServiceHandler}>
+              complete
+            </button>
+          </>
+        )}
+
+        {type === ServiceListType.COMPLETED &&
+          ((!isBuilder &&
+            !service.customerFeedback &&
+            !service.customerStarRating) ||
+            (isBuilder && !service.builderFeedback)) && (
+            <button
+              className={classes["btn"]}
+              onClick={openFeedbackFormHandler}
+            >
+              write feedback
+            </button>
+          )}
+      </div>
     </div>
   );
 }

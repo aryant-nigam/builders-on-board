@@ -232,7 +232,6 @@ function ServicesPage() {
     isLoading: isLoadingOnCustomerUpdate,
     errorMsg: errorMsgOnCustomerUpdate,
     successMsg: successMsgOnCustomerUpdate,
-    responseCode,
   } = useHttp(`https://builders-on-board-be-2.onrender.com/customer`);
 
   const {
@@ -262,12 +261,13 @@ function ServicesPage() {
     if (pincode !== pincodeInitVal) {
       body = { ...body, pincode: customerDetails!.pincode };
     }
-    if (landmark !== landmarkInitVal) {
+    if (landmark && landmark !== landmarkInitVal) {
+      console.log("LANDMARK", landmark, landmarkInitVal);
       body = { ...body, landmark: customerDetails!.landmark };
     }
     if (Object.keys(body).length !== 0) {
-      await put(body, accessToken);
-      if (responseCode === 200) {
+      const response = await put(body, accessToken);
+      if (response === 200) {
         await createService();
         dispatch(setIsServiceUpdated());
       }
@@ -290,7 +290,7 @@ function ServicesPage() {
     if (successMsgOnCreateService) {
       setTimeout(function () {
         router.replace("/profile");
-      }, 3000);
+      }, 5000);
     }
   }, [successMsgOnCreateService]);
 
@@ -351,6 +351,9 @@ function ServicesPage() {
           hasSaved={hasSavedCustomerAndServiceDetails}
           shouldRenderSubmissionStep={builderSelected !== null}
           submitHandler={submitHandler}
+          isSubmitDisabled={Boolean(
+            successMsgOnCustomerUpdate || successMsgOnCreateService
+          )}
         />
       </div>
       <div className={classes["service-page-right-section"]}>
