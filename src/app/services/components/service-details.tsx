@@ -1,5 +1,6 @@
 import React from "react";
 import classes from "./service-details.module.css";
+import { toTitleCase } from "@/utils";
 
 function ServiceDetails({ details }: { details: any }) {
   console.log(details);
@@ -9,7 +10,9 @@ function ServiceDetails({ details }: { details: any }) {
       <div className={classes.details}>
         <h4 className={classes["details-label"]}>Name:</h4>
         <p className={classes["details-value"]}>
-          {`${details.customerDetails.firstname} ${details.customerDetails.lastname}`}
+          {`${toTitleCase(details.customerDetails.firstname)} ${toTitleCase(
+            details.customerDetails.lastname
+          )}`}
         </p>
       </div>
       <div className={classes.details}>
@@ -53,15 +56,15 @@ function ServiceDetails({ details }: { details: any }) {
       <div className={classes.details}>
         <h4 className={classes["details-label"]}>Expert Name:</h4>
         <p className={classes["details-value"]}>
-          {details.builderSelected.firstname +
+          {toTitleCase(details.builderSelected.firstname) +
             " " +
-            details.builderSelected.lastname}
+            toTitleCase(details.builderSelected.lastname)}
         </p>
       </div>
       <div className={classes.details}>
         <h4 className={classes["details-label"]}>Service Type:</h4>
         <p className={classes["details-value"]}>
-          {details.builderSelected.service_type}
+          {toTitleCase(details.builderSelected.service_type)}
         </p>
       </div>
       <div className={classes.details}>

@@ -387,13 +387,13 @@ function SignupFormBuilder({
             className={classes["signup-btn"]}
             onClick={formSubmitHandler}
             disabled={
-              emailHasError ||
-              feeHasError ||
-              firstNameHasError ||
-              lastNameHasError ||
-              phnNoHasError ||
-              passwordHasError ||
-              reenteredPasswordHasError
+              !isFirstNameValid ||
+              !isLastNameValid ||
+              !isFeeValid ||
+              !isPhnNoValid ||
+              !isPincodeValid ||
+              !isPasswordValid ||
+              !isReenteredPasswordValid
             }
           >
             Sign up

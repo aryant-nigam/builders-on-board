@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import classes from "./builder-card.module.css";
 import { Builder } from "./category-segment";
+import { toTitleCase } from "@/utils";
 
 interface IBuilderCard {
   builder: Builder;
@@ -31,7 +32,7 @@ function BuilderCard({
       <img src="builder-img.png" className={classes["builder-image"]}></img>
 
       <h3 className={classes["builder-name"]}>
-        {builder.firstname + " " + builder.lastname}
+        {toTitleCase(builder.firstname) + " " + toTitleCase(builder.lastname)}
       </h3>
       <h4 className={classes["builder-expertise"]}>{builder.service_type}</h4>
 

@@ -194,7 +194,9 @@ function ServiceCard({
           {isBuilder ? "Customer Name:" : "Expert Name:"}
         </h4>
         <p className={classes["details-value"]}>
-          {isBuilder ? service.customerName : service.builderName}
+          {isBuilder
+            ? toTitleCase(service.customerName)
+            : toTitleCase(service.builderName)}
         </p>
       </div>
       <div className={classes.details}>

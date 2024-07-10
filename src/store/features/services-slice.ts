@@ -23,6 +23,7 @@ const servicesSlice = createSlice({
   initialState: initialState,
   reducers: {
     initialiseServices: (state, action) => {
+      state.inactiveServicesList = [];
       state.activeServicesList = [];
       state.completedServicesList = [];
       state.cancelledServicesList = [];

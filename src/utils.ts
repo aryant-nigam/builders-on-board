@@ -1,5 +1,6 @@
 export function toTitleCase(str: string) {
-  return str.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
+  if (str) return str.toLowerCase().replace(/\b\w/g, (s) => s.toUpperCase());
+  else return str;
 }
 
 export const serviceTypesList = [

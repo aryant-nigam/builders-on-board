@@ -5,7 +5,6 @@ import classes from "./form.module.css";
 import Input from "@/components/input";
 import { useState, useEffect } from "react";
 import { useAppDispatch } from "@/store/hooks";
-import { logIn } from "@/store/features/auth-slice";
 import { useRouter } from "next/navigation";
 import useHttp from "@/hooks/use-http";
 import Loader from "@/components/loader";
@@ -110,12 +109,15 @@ function SignupFormCustomer({
   }, [isLoginFormVisible]);
 
   const formSubmitHandler = () => {
-    post({
-      email: email.toLowerCase(),
-      firstname: firstName.toLowerCase(),
-      lastname: lastName.toLowerCase(),
-      password: password,
-    });
+    post(
+      {
+        email: email.toLowerCase(),
+        firstname: firstName.toLowerCase(),
+        lastname: lastName.toLowerCase(),
+        password: password,
+      },
+      null
+    );
 
     resetEmail();
     resetFirstName();

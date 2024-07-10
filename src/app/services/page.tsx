@@ -14,7 +14,10 @@ import Backdrop from "@/components/backdrop";
 import Loader from "@/components/loader";
 import Snackbar from "@/components/snackbar";
 import { useAppDispatch } from "@/store/hooks";
-import { removeAuthenticatedUserDetails } from "@/store/features/auth-slice";
+import {
+  removeAuthenticatedUserDetails,
+  setAuthenticatedUserPersonalDetails,
+} from "@/store/features/auth-slice";
 import { isExpired } from "react-jwt";
 import { setIsServiceUpdated } from "@/store/features/services-slice";
 import UnAuth from "@/components/unauth";
@@ -252,21 +255,38 @@ function ServicesPage() {
 
   const updateCustomerDetails = async () => {
     let body = {};
+    let personalDetails = {};
     if (phoneNumber !== phnNoInitVal) {
       body = { ...body, phn_no: customerDetails!.phoneNumber };
+      personalDetails = {
+        ...personalDetails,
+        phoneNumber: customerDetails!.phoneNumber,
+      };
     }
     if (address !== addressInitVal) {
       body = { ...body, address: customerDetails!.address };
+      personalDetails = {
+        ...personalDetails,
+        address: customerDetails!.address,
+      };
     }
     if (pincode !== pincodeInitVal) {
       body = { ...body, pincode: customerDetails!.pincode };
+      personalDetails = {
+        ...personalDetails,
+        pincode: customerDetails!.pincode,
+      };
     }
     if (landmark && landmark !== landmarkInitVal) {
-      console.log("LANDMARK", landmark, landmarkInitVal);
       body = { ...body, landmark: customerDetails!.landmark };
+      personalDetails = {
+        ...personalDetails,
+        landmark: customerDetails!.landmark,
+      };
     }
     if (Object.keys(body).length !== 0) {
       const response = await put(body, accessToken);
+      dispatch(setAuthenticatedUserPersonalDetails(personalDetails));
       if (response === 200) {
         await createService();
         dispatch(setIsServiceUpdated());
@@ -290,7 +310,7 @@ function ServicesPage() {
     if (successMsgOnCreateService) {
       setTimeout(function () {
         router.replace("/profile");
-      }, 5000);
+      }, 4000);
     }
   }, [successMsgOnCreateService]);
 
@@ -479,10 +499,9 @@ function ServicesPage() {
               value="Save"
               className={classes["save-btn"]}
               disabled={
-                phoneNumberHasError ||
-                addressHasError ||
-                pincodeHasError ||
-                landmarkHasError ||
+                !isPhoneNumberValid ||
+                !isAddressValid ||
+                !isPincodeValid ||
                 description.trim().length < 20
               }
             ></input>

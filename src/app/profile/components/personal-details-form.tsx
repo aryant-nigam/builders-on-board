@@ -240,7 +240,7 @@ const PersonalDetailsForm = () => {
         body = { ...body, address: address };
         personalDetails = { ...personalDetails, address: address };
       }
-      if (landmark !== landmarkInitVal) {
+      if (landmark && landmark !== landmarkInitVal) {
         body = { ...body, landmark: landmark };
         personalDetails = { ...personalDetails, landmark: landmark };
       }
